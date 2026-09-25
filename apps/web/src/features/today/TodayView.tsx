@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { plural, sumMinutes, todayGroups, type Task } from '@faxyna/core';
 import { PageContent, PageHeader } from '@/components/layout/PageHeader';
 import { Card, Eyebrow, Icon, ProgressBar, SectionHeader } from '@/components/ui';
+import { InstallCard } from '@/features/install/InstallCard';
 import { useWeekProgress } from '@/features/progress/useWeekProgress';
 import { NoTasksState } from '@/features/tasks/NoTasksState';
 import { TaskRow } from '@/features/tasks/TaskRow';
@@ -49,6 +50,7 @@ export function TodayView() {
   return (
     <>
       <PageHeader title="Hoje" subtitle={subtitle} withFilter />
+      <InstallCard />
       {!tasks.length ? (
         <NoTasksState />
       ) : (
