@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { AppShell } from '@/components/layout/AppShell';
+import { Splash } from '@/components/layout/Splash';
 import '@/styles/globals.css';
 
 const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-inter' });
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        <Splash />
         <AppShell>{children}</AppShell>
       </body>
     </html>
