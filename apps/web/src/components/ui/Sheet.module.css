@@ -10,13 +10,16 @@
   --sheet-pad-x: 20px;
   position: fixed;
   left: 50%;
-  bottom: 0;
+  /* --vv-* follow the visual viewport (browser bars, iOS keyboard); set by Sheet.tsx. */
+  bottom: var(--vv-bottom, 0px);
   transform: translateX(-50%);
   width: 100%;
   max-width: 440px;
   max-height: 92vh;
+  max-height: calc(var(--vv-height, 100dvh) - 24px);
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 18px 18px 0 0;
