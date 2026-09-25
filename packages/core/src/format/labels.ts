@@ -85,4 +85,5 @@ export function historyLabel(h: HistoryEntry): StatusLabel {
 
 export const PRIORITY_LABEL: Record<Priority, string> = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
 
-export const minutesLabel = (m: number) => m + ' min';
+export const minutesLabel = (m: number) =>
+  m < 60 ? m + ' min' : Math.floor(m / 60) + 'h' + (m % 60 ? String(m % 60).padStart(2, '0') : '');

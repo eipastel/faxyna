@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Priority, Task } from '@faxyna/core';
+import { minutesLabel } from '@faxyna/core';
 import { Button, Chip, Dot, Icon, IconButton } from '@/components/ui';
 import { roomColors } from '@/lib/roomColors';
 import { useData } from '@/providers/DataProvider';
@@ -17,7 +18,7 @@ const PRIORITIES: { value: Priority; label: string; dot: string }[] = [
   { value: 'media', label: 'Média', dot: 'var(--text-2)' },
   { value: 'alta', label: 'Alta', dot: 'var(--amber)' },
 ];
-const MINUTES = [5, 10, 15, 20, 30, 45, 60, 90];
+const MINUTES = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300];
 
 /** Task create and edit form. */
 export function TaskForm({ task, roomId }: { task?: Task; roomId?: string }) {
@@ -102,7 +103,7 @@ export function TaskForm({ task, roomId }: { task?: Task; roomId?: string }) {
         <div className={styles.bleedRow}>
           {MINUTES.map((n) => (
             <Chip key={n} selected={values.minutes === n} className={styles.minuteChip} onClick={() => set({ minutes: n })}>
-              {n} min
+              {minutesLabel(n)}
             </Chip>
           ))}
         </div>

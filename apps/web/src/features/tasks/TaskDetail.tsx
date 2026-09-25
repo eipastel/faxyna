@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { capitalize, fmtLong, fmtShort, freqLabel, historyLabel, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
+import { capitalize, fmtLong, fmtShort, freqLabel, historyLabel, lastCompletion, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
 import { Button, Card, Dot, Eyebrow, Icon, IconButton } from '@/components/ui';
 import { roomColors } from '@/lib/roomColors';
 import { useData } from '@/providers/DataProvider';
@@ -19,6 +19,7 @@ export function TaskDetail({ task }: { task: Task }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const r = room(task.roomId);
   const who = person(task.personId);
+  const doneToday = lastCompletion(task)?.date === today;
 
   const act = (fn: () => void) => () => {
     fn();
@@ -70,11 +71,19 @@ export function TaskDetail({ task }: { task: Task }) {
         <span>{streakLabel}</span>
       </div>
 
+      {doneToday && (
+        <Button size="xxl" icon="undo" iconSize={20} onClick={act(() => actions.uncomplete(task.id))}>
+          Desmarcar como feita
+        </Button>
+      )}
+
       {task.nextDue && (
         <div className={styles.actions}>
-          <Button variant="primary" size="xxl" icon="check" iconSize={20} onClick={act(() => actions.complete(task.id))}>
-            Marcar como feita
-          </Button>
+          {!doneToday && (
+            <Button variant="primary" size="xxl" icon="check" iconSize={20} onClick={act(() => actions.complete(task.id))}>
+              Marcar como feita
+            </Button>
+          )}
           <div className={styles.threeCols}>
             <Button onClick={act(() => actions.postpone(task.id, 1))}>Adiar 1 dia</Button>
             <Button onClick={act(() => actions.postpone(task.id, 3))}>Adiar 3 dias</Button>

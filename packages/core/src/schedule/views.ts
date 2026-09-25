@@ -66,7 +66,7 @@ export function weekAgenda(tasks: Task[], weekStart: IsoDate, today: IsoDate, pe
 
   tasks.forEach((t) =>
     t.history.forEach((h) => {
-      if (h.type === 'done' && entryMatches(h, person)) map.get(h.date)?.push({ task: t, projected: false, done: true });
+      if (h.type === 'done' && entryMatches(h, person)) map.get(h.date)?.push({ task: t, due: h.date, projected: false, done: true });
     }),
   );
 
