@@ -29,6 +29,24 @@ export function Sheet({ open, onClose, label, children }: SheetProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
+  // iOS keeps the layout viewport full height when the keyboard opens, so a
+  // bottom-pinned sheet ends up under the keyboard. Track the visible area.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!open || !vv) return;
+    const sync = () => {
+      panel.current?.style.setProperty('--vv-height', `${vv.height}px`);
+      panel.current?.style.setProperty('--vv-bottom', `${Math.max(0, window.innerHeight - vv.height - vv.offsetTop)}px`);
+    };
+    sync();
+    vv.addEventListener('resize', sync);
+    vv.addEventListener('scroll', sync);
+    return () => {
+      vv.removeEventListener('resize', sync);
+      vv.removeEventListener('scroll', sync);
+    };
+  }, [open]);
+
   if (!open) return null;
   return (
     <>
