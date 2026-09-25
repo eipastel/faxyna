@@ -1,0 +1,98 @@
+.card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  margin: 16px 16px 0;
+}
+@media (min-width: 900px) {
+  .card {
+    margin: 24px 40px 0;
+    max-width: 520px;
+  }
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--blue);
+  display: grid;
+  place-items: center;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.title {
+  font: 600 15px var(--sans);
+}
+.sub {
+  font: 400 13.5px/1.4 var(--sans);
+  color: var(--text-2);
+}
+
+.close {
+  align-self: start;
+}
+
+.action {
+  grid-column: 1 / -1;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.stepsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.stepsTitle {
+  margin: 0;
+  font: 600 19px/1.3 var(--sans);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font: 400 15px/1.5 var(--sans);
+}
+.list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.num {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--blue-soft);
+  color: var(--blue-ink);
+  font: 600 13px/26px var(--mono);
+  text-align: center;
+}
+.inline {
+  vertical-align: -4px;
+  color: var(--blue);
+}
+
+.hint {
+  margin: 0;
+  font: 400 13.5px/1.4 var(--sans);
+  color: var(--text-3);
+}

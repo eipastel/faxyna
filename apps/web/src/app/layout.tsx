@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: 'Faxyna',
   description,
   applicationName: 'Faxyna',
-  appleWebApp: { title: 'Faxyna' },
+  appleWebApp: { capable: true, title: 'Faxyna', statusBarStyle: 'default' },
   openGraph: { type: 'website', locale: 'pt_BR', siteName: 'Faxyna', title: 'Faxyna', description },
   twitter: { card: 'summary_large_image', title: 'Faxyna', description },
 };
@@ -23,6 +23,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  // Lets env(safe-area-inset-*) report the home indicator area on iOS.
+  viewportFit: 'cover',
   themeColor: '#f5f6f8',
 };
 
