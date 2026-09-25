@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, type ReactNode } from 'react';
+import { InstallCard } from '@/features/install/InstallCard';
 import { TaskSheetProvider } from '@/features/tasks/TaskSheetProvider';
 import { DataProvider } from '@/providers/DataProvider';
 import { GatewayProvider } from '@/providers/GatewayProvider';
 import { PersonFilterProvider } from '@/providers/PersonFilterProvider';
 import { ToastProvider } from '@/providers/ToastProvider';
 import { BottomDock } from './BottomDock';
+import { SplashDismiss } from './Splash';
 import { Sidebar } from './Sidebar';
 import styles from './AppShell.module.css';
 
@@ -23,11 +25,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         <ToastProvider>
           <PersonFilterProvider>
             <TaskSheetProvider>
+              <SplashDismiss />
               <div className={styles.shell}>
                 <Sidebar />
                 <main className={styles.main}>{children}</main>
               </div>
               <BottomDock />
+              <InstallCard />
             </TaskSheetProvider>
           </PersonFilterProvider>
         </ToastProvider>

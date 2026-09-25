@@ -19,7 +19,7 @@ const isStandalone = () =>
 const isIos = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
 
 /**
- * "Install the app" card. Android/desktop Chromium get the native prompt;
+ * "Install the app" popup floating at the top of the screen. Android/desktop Chromium get the native prompt;
  * iOS has no install API, so it opens a sheet with the Share > Add to Home Screen steps.
  */
 export function InstallCard() {
@@ -71,18 +71,20 @@ export function InstallCard() {
 
   return (
     <>
-      <div className={styles.card}>
+      <div role="dialog" aria-label="Instalar o Faxyna" className={styles.card}>
         <div className={styles.logo}>
-          <Icon name="install_mobile" size={22} color="#ffffff" />
+          <Icon name="install_mobile" size={20} color="#ffffff" />
         </div>
         <div className={styles.text}>
           <span className={styles.title}>Instale o Faxyna</span>
-          <span className={styles.sub}>Abra direto da tela inicial, em tela cheia e até sem internet.</span>
+          <span className={styles.sub}>Tela cheia e funciona sem internet.</span>
         </div>
-        <IconButton icon="close" label="Agora não" onClick={dismiss} className={styles.close} />
-        <Button variant="primary" size="sm" icon="download" className={styles.action} onClick={install} disabled={mode === 'prompt' && !deferred}>
-          Instalar app
+        <Button variant="primary" size="sm" onClick={install} disabled={mode === 'prompt' && !deferred}>
+          Instalar
         </Button>
+        <IconButton icon="close" iconSize={18} label="Agora não" onClick={dismiss} className={styles.close} />
+        {/* Countdown: hides the popup for this visit only (the close button is what remembers). */}
+        <div className={styles.timer} onAnimationEnd={() => setMode(null)} />
       </div>
 
       <Sheet open={showSteps} onClose={() => setShowSteps(false)} label="Como instalar no iPhone">
