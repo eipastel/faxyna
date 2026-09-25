@@ -2,10 +2,14 @@ import type { IsoDate, Task } from '../domain/types';
 import { addDays } from './dates';
 import { nextAfter } from './frequency';
 
-/** Recurrence counts from the day the task was completed. */
+/**
+ * Recurrence counts from the day the task was completed, but always moves past
+ * the occurrence being completed (early completions would otherwise land on it again).
+ */
 export function completeTask(task: Task, today: IsoDate): Task {
   const onTime = !!task.nextDue && task.nextDue >= today;
-  const next = nextAfter(task.freq, today);
+  let next = nextAfter(task.freq, today);
+  if (next && task.nextDue && next <= task.nextDue) next = nextAfter(task.freq, task.nextDue);
   return {
     ...task,
     nextDue: next,

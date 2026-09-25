@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, completeTask, dayOfWeek, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
+  addDays, completeTask, dayOfWeek, minutesLabel, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
   skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
   buildExampleTasks, DEFAULT_PEOPLE, DEFAULT_ROOMS,
 } from '../src';
@@ -50,6 +50,16 @@ describe('ações', () => {
     expect(t.nextDue).toBe('2024-01-04');
     expect(t.streak).toBe(3);
     expect(t.history[0]).toMatchObject({ type: 'done', onTime: true, date: MON });
+  });
+
+  it('concluir antes do prazo avança para depois da ocorrência concluída', () => {
+    expect(completeTask(task({ nextDue: '2024-01-04' }), MON).nextDue).toBe('2024-01-07');
+    expect(completeTask(task({ freq: { type: 'interval', every: 1, start: MON }, nextDue: '2024-01-02' }), MON).nextDue).toBe('2024-01-03');
+    expect(completeTask(task({ freq: { type: 'weekdays', days: [3] }, nextDue: '2024-01-03' }), MON).nextDue).toBe('2024-01-10');
+  });
+
+  it('rótulo de tempo', () => {
+    expect([30, 60, 90, 125].map(minutesLabel)).toEqual(['30 min', '1h', '1h30', '2h05']);
   });
 
   it('concluir atrasada zera streak; "uma vez" encerra', () => {
