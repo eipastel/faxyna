@@ -11,7 +11,8 @@ export type Frequency =
 export type FrequencyType = Frequency['type'];
 
 export type HistoryEntry =
-  | { date: IsoDate; type: 'done'; personId: string | null; onTime: boolean }
+  /** `prevDue`/`prevStreak` let `uncompleteTask` restore the task (absent on older entries). */
+  | { date: IsoDate; type: 'done'; personId: string | null; onTime: boolean; prevDue?: IsoDate; prevStreak?: number }
   | { date: IsoDate; type: 'skip'; personId: string | null }
   | { date: IsoDate; type: 'postpone'; days: number; personId: string | null };
 

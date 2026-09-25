@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addDays, completeTask, dayOfWeek, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
-  skipTask, todayGroups, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
+  skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
   buildExampleTasks, DEFAULT_PEOPLE, DEFAULT_ROOMS,
 } from '../src';
 
@@ -57,6 +57,14 @@ describe('ações', () => {
     const once = completeTask(task({ freq: { type: 'once', date: MON } }), MON);
     expect(once.nextDue).toBeNull();
     expect(once.archived).toBe(true);
+  });
+
+  it('desmarcar volta ao estado anterior', () => {
+    const before = task({ nextDue: '2024-01-02', streak: 2 });
+    expect(uncompleteTask(completeTask(before, MON))).toEqual(before);
+    const once = task({ freq: { type: 'once', date: MON } });
+    expect(uncompleteTask(completeTask(once, MON))).toEqual(once);
+    expect(uncompleteTask(before)).toBe(before);
   });
 
   it('pular e adiar', () => {
