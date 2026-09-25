@@ -2,9 +2,6 @@
 
 import { useEffect } from 'react';
 
-// TODO(remove): simulated minimum duration so the splash can be reviewed on the preview.
-const SIMULATED_MIN_MS = 2500;
-
 // Inlined so the splash paints with the first HTML byte, before any stylesheet or font.
 const css = `
 .splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#f5f6f8;transition:opacity .45s cubic-bezier(.22,.61,.36,1),visibility .45s}
@@ -41,8 +38,7 @@ export function Splash() {
 /** Rendered inside DataProvider, so it mounts only once the data has loaded. */
 export function SplashDismiss() {
   useEffect(() => {
-    const minDelay = new Promise((resolve) => setTimeout(resolve, SIMULATED_MIN_MS));
-    Promise.all([document.fonts.ready, minDelay]).then(() => {
+    document.fonts.ready.then(() => {
       document.documentElement.dataset.ready = '';
     });
   }, []);
