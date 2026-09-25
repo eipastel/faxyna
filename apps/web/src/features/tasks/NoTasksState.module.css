@@ -1,0 +1,41 @@
+.empty {
+  margin: 40px 20px;
+  padding: 32px 24px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.iconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+}
+
+.title {
+  margin: 0;
+  font: 600 17px/1.3 var(--sans);
+}
+
+.text {
+  margin: 0;
+  font: 400 14.5px/1.5 var(--sans);
+  color: var(--text-2);
+  text-wrap: pretty;
+  max-width: 280px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}

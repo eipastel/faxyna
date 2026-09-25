@@ -1,0 +1,52 @@
+.weekCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.weekCard:hover {
+  border-color: var(--line-strong);
+  color: inherit;
+}
+
+.weekBar {
+  flex: 1;
+}
+
+.weekPct {
+  font: 600 13px/1 var(--mono);
+  color: var(--text);
+}
+
+.allClear {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.allClearText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.allClearTitle {
+  font: 500 15px var(--sans);
+}
+.allClearSub {
+  font: 400 14px var(--sans);
+  color: var(--text-2);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

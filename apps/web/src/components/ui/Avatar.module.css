@@ -1,0 +1,21 @@
+.avatar {
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--hover);
+  border: 1px solid var(--line-strong);
+  display: grid;
+  place-items: center;
+  color: var(--text-2);
+}
+
+.sm {
+  width: 24px;
+  height: 24px;
+  font: 600 11px var(--sans);
+}
+
+.md {
+  width: 26px;
+  height: 26px;
+  font: 600 12px var(--sans);
+}

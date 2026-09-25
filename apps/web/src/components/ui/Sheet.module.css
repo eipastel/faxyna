@@ -1,0 +1,53 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 24, 27, 0.32);
+  z-index: 20;
+}
+
+.panel {
+  /* Horizontal content padding; used by lists that bleed to the edge. */
+  --sheet-pad-x: 20px;
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 440px;
+  max-height: 92vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px 18px 0 0;
+  z-index: 21;
+  padding: 10px var(--sheet-pad-x) calc(24px + env(safe-area-inset-bottom));
+  box-shadow: 0 -10px 40px rgba(24, 24, 27, 0.1);
+  outline: none;
+}
+
+.handle {
+  width: 36px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--line-strong);
+  margin: 0 auto 14px;
+}
+
+@media (min-width: 900px) {
+  .panel {
+    --sheet-pad-x: 28px;
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 48px);
+    max-width: 580px;
+    max-height: 88vh;
+    border-radius: var(--radius-xl);
+    padding: 28px;
+  }
+
+  .handle {
+    display: none;
+  }
+}

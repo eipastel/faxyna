@@ -1,0 +1,31 @@
+.toast {
+  pointer-events: auto;
+  margin: 0 16px 10px;
+  padding: 10px 10px 10px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--hover);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 10px 30px rgba(24, 24, 27, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.message {
+  flex: 1;
+  font: 400 14px/1.35 var(--sans);
+}
+
+.undo {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--blue-ink);
+  font: 500 14px var(--sans);
+  cursor: pointer;
+}
+.undo:hover {
+  background: var(--blue-soft);
+}

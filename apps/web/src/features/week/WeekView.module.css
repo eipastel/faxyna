@@ -1,0 +1,144 @@
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.range {
+  border: none;
+  background: none;
+  color: var(--text);
+  font: 500 14px var(--mono);
+  cursor: pointer;
+}
+
+/* ---------- Mobile ---------- */
+.mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.stripDay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 0 9px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  color: var(--text);
+}
+.stripLetter {
+  font: 500 10.5px var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+}
+.stripNum {
+  font: 600 16px/1 var(--mono);
+  color: var(--text);
+}
+.stripCount {
+  font: 500 10px/1 var(--mono);
+  color: var(--text-2);
+  height: 10px;
+}
+.stripCountEmpty {
+  color: var(--line-strong);
+}
+
+.isToday {
+  border-color: var(--blue);
+}
+.isSelected {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+.isSelected .stripLetter,
+.isSelected .stripCount {
+  color: rgba(255, 255, 255, 0.8);
+}
+.isSelected .stripNum {
+  color: #ffffff;
+}
+
+/* ---------- Desktop ---------- */
+.boardScroll {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .mobile {
+    display: none;
+  }
+  .boardScroll {
+    display: block;
+    overflow-x: auto;
+    margin: 0 -4px;
+    padding: 0 4px 8px;
+  }
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(128px, 1fr));
+  gap: 10px;
+  align-items: start;
+  min-width: 960px;
+}
+
+.column {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.columnToday {
+  border-color: var(--blue);
+}
+
+.columnHead {
+  padding: 12px 12px 10px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.columnLetter {
+  font: 500 12px var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+}
+.columnNum {
+  font: 600 20px/1 var(--mono);
+  color: var(--text);
+}
+.columnToday .columnNum {
+  color: var(--blue);
+}
+
+.columnBody {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.free {
+  padding: 6px 4px;
+  font: 400 12.5px var(--sans);
+  color: var(--text-4);
+}

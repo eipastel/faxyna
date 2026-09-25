@@ -1,0 +1,27 @@
+.pill {
+  font: 500 11.5px/1 var(--mono);
+  padding: 5px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.neutral {
+  background: var(--hover);
+  color: var(--text-2);
+}
+.today {
+  background: var(--blue-soft);
+  color: var(--blue-ink);
+}
+.overdue {
+  background: var(--red-soft);
+  color: var(--red);
+}
+.done {
+  background: var(--green-soft);
+  color: var(--green);
+}
+.late {
+  background: var(--amber-soft);
+  color: var(--amber);
+}

@@ -1,0 +1,37 @@
+/* Design v2 tokens (docs/design/Cronograma de Limpeza v2.dc.html). */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-muted: #fafafa;
+  --hover: #f4f4f5;
+
+  --text: #18181b;
+  --text-2: #52525b;
+  --text-3: #71717a;
+  --text-4: #a1a1aa;
+
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+
+  --blue: #2563eb;
+  --blue-ink: #1d4ed8;
+  --blue-soft: rgba(37, 99, 235, 0.1);
+  --green: #16a34a;
+  --green-soft: rgba(22, 163, 74, 0.1);
+  --red: #dc2626;
+  --red-soft: rgba(220, 38, 38, 0.08);
+  --amber: #d97706;
+  --amber-soft: rgba(217, 119, 6, 0.1);
+
+  --radius-sm: 7px;
+  --radius: 9px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-pill: 999px;
+
+  --sans: var(--font-inter), Inter, system-ui, sans-serif;
+  --mono: var(--font-mono), 'JetBrains Mono', monospace;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}

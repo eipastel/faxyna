@@ -1,0 +1,77 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  text-align: left;
+  color: inherit;
+}
+.head:hover {
+  background: var(--hover);
+}
+
+.iconBox {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+}
+
+.headText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.name {
+  font: 600 15px var(--sans);
+}
+
+/* Rows separated by a border, like a list (the "Adicionar" button has its own) */
+.body {
+  border-top: 1px solid var(--line);
+}
+.body > * {
+  border-top: 1px solid transparent;
+}
+.body > * + * {
+  border-top-color: var(--line);
+}
+
+.add {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: none;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-2);
+  font: 500 14px var(--sans);
+  cursor: pointer;
+}
+.add:hover {
+  background: var(--hover);
+  color: var(--text);
+}

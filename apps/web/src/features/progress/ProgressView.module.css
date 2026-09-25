@@ -1,0 +1,120 @@
+.summary {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.summaryHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.summaryValue {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.bigPct {
+  font: 600 40px/1 var(--mono);
+  letter-spacing: -0.03em;
+}
+.summarySub {
+  font: 400 14px var(--sans);
+  color: var(--text-2);
+}
+
+.people {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.personCard {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.personHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.personName {
+  font: 500 15px var(--sans);
+}
+.stats {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font: 400 12px var(--mono);
+  color: var(--text-2);
+}
+.stat {
+  display: flex;
+  justify-content: space-between;
+}
+.stat dd {
+  margin: 0;
+  color: var(--text);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rowText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.streakRow {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  text-align: left;
+  color: inherit;
+}
+.streakRow:hover {
+  background: var(--hover);
+}
+.rowName {
+  font: 500 15px var(--sans);
+}
+.streakCount {
+  font: 600 13px var(--mono);
+}
+
+.historyRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+}
+.historyRow .rowText {
+  gap: 2px;
+}
+.historyDate {
+  flex: none;
+  width: 44px;
+  font: 400 12.5px var(--mono);
+  color: var(--text-3);
+}
+.historyName {
+  font: 500 13.5px var(--sans);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

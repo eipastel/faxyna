@@ -1,0 +1,13 @@
+name: faxyna
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: docker-local/Dockerfile
+    image: faxyna-web:local
+    ports:
+      # Uncommon host port to avoid clashing with other local projects.
+      # Override with: FAXYNA_PORT=12345 docker compose up
+      - "${FAXYNA_PORT:-47310}:8080"
+    restart: unless-stopped

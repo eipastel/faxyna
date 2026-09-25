@@ -1,0 +1,115 @@
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.roomLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.title {
+  margin: 0;
+  font: 600 21px/1.25 var(--sans);
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+}
+.infoLabel {
+  font: 400 14px var(--sans);
+  color: var(--text-2);
+}
+.infoValue {
+  font: 500 14px var(--sans);
+  color: var(--text);
+  text-align: right;
+}
+
+.notes {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font: 400 14.5px/1.5 var(--sans);
+  color: var(--text-2);
+  white-space: pre-wrap;
+}
+
+.streak {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 2px;
+  font: 500 14px var(--mono);
+  color: var(--text-2);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.threeCols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.historyRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 400 12px var(--mono);
+  color: var(--text-2);
+}
+.historyDate {
+  width: 44px;
+  color: var(--text-3);
+}
+.historyLabel {
+  flex: 1;
+}
+.historyBy {
+  color: var(--text-3);
+}
+
+.footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}

@@ -1,0 +1,26 @@
+.chip {
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.pill {
+  border-radius: var(--radius-pill);
+}
+
+.box {
+  border-radius: var(--radius);
+}
+
+.soft {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+  color: var(--blue-ink);
+}
+
+.solid {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #ffffff;
+}

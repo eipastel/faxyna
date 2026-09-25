@@ -1,0 +1,16 @@
+{
+  "name": "faxyna",
+  "private": true,
+  "packageManager": "pnpm@11.14.0",
+  "scripts": {
+    "dev": "pnpm --filter @faxyna/web dev",
+    "build": "pnpm --filter @faxyna/web build",
+    "start": "pnpm --filter @faxyna/web start",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
+  }
+}

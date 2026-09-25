@@ -1,0 +1,40 @@
+@import './tokens.css';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--blue);
+}
+
+input,
+textarea,
+button {
+  font-family: inherit;
+}
+
+input[type='date'] {
+  color-scheme: light;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* The design hides scrollbars. */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}

@@ -1,0 +1,27 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+  align-items: flex-start;
+}
+
+/* Mobile: centered 440px column with side borders. */
+.main {
+  flex: 1;
+  min-width: 0;
+  max-width: 440px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--bg);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  padding-bottom: 150px;
+}
+
+@media (min-width: 900px) {
+  .main {
+    max-width: 1120px;
+    background: transparent;
+    border-color: transparent;
+    padding-bottom: 64px;
+  }
+}

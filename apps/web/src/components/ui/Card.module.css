@@ -1,0 +1,30 @@
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.plain {
+  background: transparent;
+}
+
+.list.list > * {
+  border-top: 1px solid transparent; /* the design reserves 1px on the first row too */
+}
+.list.list > * + * {
+  border-top-color: var(--line);
+}
+
+.dashed {
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-lg);
+  font: 400 14px var(--sans);
+  color: var(--text-3);
+  text-align: center;
+}
+
+.roomy {
+  padding: 28px 16px;
+}
