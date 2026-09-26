@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { cancelInvite, inviteToHouse } from '@faxyna/data-firebase';
 import { PageContent, PageHeader } from '@/components/layout/PageHeader';
-import { Avatar, Button, Card, DashedNote, Icon, IconButton, SectionHeader } from '@/components/ui';
+import { Avatar, Button, Card, DashedNote, Icon, IconButton, Input, SectionHeader } from '@/components/ui';
 import { firebase } from '@/lib/firebase';
 import { useData } from '@/providers/DataProvider';
 import { useSession } from '@/providers/SessionProvider';
@@ -57,7 +57,7 @@ export function HouseView() {
         <section className={styles.section}>
           <SectionHeader title="Convidar" />
           <form className={styles.inviteForm} onSubmit={invite}>
-            <input
+            <Input
               type="email"
               className={styles.input}
               value={email}

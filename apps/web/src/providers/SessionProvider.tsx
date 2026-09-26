@@ -1,14 +1,11 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import {
-  createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup,
-  signOut, type User,
-} from 'firebase/auth';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 import { FirestoreGateway, watchHouses, type House, type Member } from '@faxyna/data-firebase';
 import { SplashDismiss } from '@/components/layout/Splash';
 import { HouseSetupScreen, SignInScreen } from '@/features/session/SessionScreens';
-import { firebase } from '@/lib/firebase';
+import { firebase, signOutUser } from '@/lib/firebase';
 import { GatewayProvider } from './GatewayProvider';
 
 interface Session {
@@ -26,11 +23,6 @@ const toMember = (u: User): Member => ({
   name: u.displayName?.split(' ')[0] || u.email?.split('@')[0] || 'Eu',
 });
 
-export const signOutUser = () => signOut(firebase().auth);
-export const signIn = () => signInWithPopup(firebase().auth, new GoogleAuthProvider());
-export const signInWithEmail = (email: string, password: string) => signInWithEmailAndPassword(firebase().auth, email, password);
-// No email verification: invites still require a verified email (see firestore.rules).
-export const createAccount = (email: string, password: string) => createUserWithEmailAndPassword(firebase().auth, email, password);
 
 /**
  * Auth + house gate: sign-in screen, then create/join a house, then the app

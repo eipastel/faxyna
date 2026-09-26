@@ -35,7 +35,7 @@ export function Splash() {
   );
 }
 
-/** Rendered inside DataProvider, so it mounts only once the data has loaded. */
+/** Mounted by each first screen: sign-in, house setup, or the app once its data has loaded. */
 export function SplashDismiss() {
   useEffect(() => {
     document.fonts.ready.then(() => {

@@ -64,25 +64,13 @@
   gap: 8px;
   text-align: left;
 }
-.label {
-  font: 500 13px var(--sans);
-  color: var(--text-2);
-}
-.input {
-  height: 46px;
-  padding: 0 14px;
-  margin-bottom: 4px;
+.note {
+  margin: 0;
+  padding: 10px 12px;
   border-radius: var(--radius);
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
-  color: var(--text);
-  /* 16px keeps iOS Safari from zooming on focus. */
-  font: 500 16px var(--sans);
-  outline: none;
-}
-.input:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px var(--blue-soft);
+  background: var(--blue-soft);
+  font: 400 13.5px/1.4 var(--sans);
+  color: var(--blue-ink);
 }
 
 .divider {

@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut,
+} from 'firebase/auth';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 
 // Web config is public by design; access is enforced by firestore.rules.
@@ -29,3 +31,9 @@ function init() {
 
 /** Lazy so nothing runs during the static prerender. Browser only. */
 export const firebase = () => (instance ??= init());
+
+export const signIn = () => signInWithPopup(firebase().auth, new GoogleAuthProvider());
+export const signInWithEmail = (email: string, password: string) => signInWithEmailAndPassword(firebase().auth, email, password);
+// No email verification: invites still require a verified email (see firestore.rules).
+export const createAccount = (email: string, password: string) => createUserWithEmailAndPassword(firebase().auth, email, password);
+export const signOutUser = () => signOut(firebase().auth);

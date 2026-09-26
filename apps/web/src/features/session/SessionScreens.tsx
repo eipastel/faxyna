@@ -2,9 +2,8 @@
 
 import { useState, type FormEvent } from 'react';
 import { createHouse, joinHouse, type House, type Member } from '@faxyna/data-firebase';
-import { Button, Icon } from '@/components/ui';
-import { firebase } from '@/lib/firebase';
-import { createAccount, signIn, signInWithEmail, signOutUser } from '@/providers/SessionProvider';
+import { Button, Eyebrow, Icon, Input } from '@/components/ui';
+import { createAccount, firebase, signIn, signInWithEmail, signOutUser } from '@/lib/firebase';
 import styles from './SessionScreens.module.css';
 
 function Frame({ title, text, children }: { title: string; text: string; children: React.ReactNode }) {
@@ -69,9 +68,9 @@ export function SignInScreen() {
       <div className={styles.divider}>ou com e-mail</div>
 
       <form className={styles.form} onSubmit={submit}>
-        <input className={styles.input} type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
           placeholder="E-mail" aria-label="E-mail" autoComplete="email" />
-        <input className={styles.input} type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+        <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
           placeholder="Senha" aria-label="Senha" autoComplete="current-password" />
         <div className={styles.twoCols}>
           <Button disabled={busy || !filled} onClick={() => run(() => createAccount(email.trim(), password))}>Criar conta</Button>
@@ -98,6 +97,7 @@ export function HouseSetupScreen({ member, invites }: { member: Member; invites:
       title={`Oi, ${member.name}`}
       text={invites.length ? 'Você foi convidado para uma casa. Entre nela ou crie a sua.' : 'Crie a sua casa. Depois é só convidar quem mora com você.'}
     >
+      {!member.emailVerified && <p className={styles.note}>Recebeu um convite? Convites só aparecem ao entrar com Google.</p>}
       {invites.map((h) => (
         <div key={h.id} className={styles.invite}>
           <Icon name="home" size={20} color="var(--blue)" />
@@ -109,8 +109,8 @@ export function HouseSetupScreen({ member, invites }: { member: Member; invites:
       ))}
 
       <form className={styles.form} onSubmit={create}>
-        <label className={styles.label} htmlFor="house-name">Nome da casa</label>
-        <input id="house-name" className={styles.input} value={name} onChange={(e) => setName(e.target.value)} maxLength={40} />
+        <Eyebrow>Nome da casa</Eyebrow>
+        <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={40} aria-label="Nome da casa" />
         <Button type="submit" variant={invites.length ? 'outline' : 'primary'} size="xxl" icon="add_home" disabled={busy || !name.trim()}>
           Criar casa
         </Button>

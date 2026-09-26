@@ -1,5 +1,5 @@
 import {
-  addDoc, arrayRemove, arrayUnion, collection, doc, onSnapshot, query, serverTimestamp, updateDoc, where,
+  arrayRemove, arrayUnion, collection, doc, onSnapshot, query, serverTimestamp, setDoc, updateDoc, where,
   type Firestore, type QueryDocumentSnapshot,
 } from 'firebase/firestore';
 import { DEFAULT_ROOMS, DEFAULT_SETTINGS, type Person, type Room, type Settings, type Unsubscribe } from '@faxyna/core';
@@ -42,26 +42,27 @@ export const toPeople = (house: Pick<HouseDoc, 'people'>): Person[] =>
 const toHouses = (docs: QueryDocumentSnapshot[]) => docs.map((d) => ({ id: d.id, ...(d.data() as HouseDoc) }));
 
 /** Houses the user belongs to and houses they were invited to, kept live. */
+// Right after create/join the local cache shows the house before the server has
+// committed it, when the rules would still refuse its tasks. Those houses are held
+// back until confirmed; any other pending write (an edit, even offline) never hides a house.
+const settling = new Set<string>();
+
 export function watchHouses(
   db: Firestore,
   user: Member,
   listener: (houses: { mine: House[]; invites: House[] }) => void,
 ): Unsubscribe {
   const houses = collection(db, 'houses');
-  // Right after create/join the local cache shows the house before the server has
-  // committed it, when the rules would still refuse its tasks. Hold a house back
-  // until the server confirms it once; later pending writes (edits) don't hide it.
-  const confirmed = new Set<string>();
-  const isConfirmed = (d: QueryDocumentSnapshot) => {
-    if (!d.metadata.hasPendingWrites) confirmed.add(d.id);
-    return confirmed.has(d.id);
+  const isReady = (d: QueryDocumentSnapshot) => {
+    if (!d.metadata.hasPendingWrites) settling.delete(d.id);
+    return !settling.has(d.id);
   };
   let mine: House[] | null = null;
   let invites: House[] | null = user.emailVerified ? null : [];
   const emit = () => mine && invites && listener({ mine, invites });
   const subs = [
     onSnapshot(query(houses, where('memberUids', 'array-contains', user.uid)), { includeMetadataChanges: true }, (s) => {
-      mine = toHouses(s.docs.filter(isConfirmed));
+      mine = toHouses(s.docs.filter(isReady));
       emit();
     }),
   ];
@@ -77,7 +78,9 @@ export function watchHouses(
 }
 
 export async function createHouse(db: Firestore, user: Member, name: string): Promise<string> {
-  const ref = await addDoc(collection(db, 'houses'), {
+  const ref = doc(collection(db, 'houses'));
+  settling.add(ref.id);
+  await setDoc(ref, {
     name,
     ownerUid: user.uid,
     memberUids: [user.uid],
@@ -90,12 +93,14 @@ export async function createHouse(db: Firestore, user: Member, name: string): Pr
   return ref.id;
 }
 
-export const joinHouse = (db: Firestore, houseId: string, user: Member) =>
-  updateDoc(houseRef(db, houseId), {
+export function joinHouse(db: Firestore, houseId: string, user: Member) {
+  settling.add(houseId);
+  return updateDoc(houseRef(db, houseId), {
     memberUids: arrayUnion(user.uid),
     invites: arrayRemove(user.email.toLowerCase()),
     [`people.${user.uid}`]: { name: user.name, joinedAt: Date.now() },
   });
+}
 
 export const inviteToHouse = (db: Firestore, houseId: string, email: string) =>
   updateDoc(houseRef(db, houseId), { invites: arrayUnion(email.trim().toLowerCase()) });
