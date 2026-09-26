@@ -1,0 +1,20 @@
+{
+  "name": "@faxyna/data-firebase",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-faxyna \"vitest run\""
+  },
+  "dependencies": {
+    "@faxyna/core": "workspace:*",
+    "firebase": "^12.19.0"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2"
+  }
+}

@@ -1,0 +1,57 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 10px 8px 14px;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  font: 500 15px var(--sans);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font: 400 12.5px var(--mono);
+  color: var(--text-3);
+  padding-right: 4px;
+}
+
+.inviteForm {
+  display: flex;
+  gap: 8px;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  /* 16px keeps iOS Safari from zooming on focus. */
+  font: 500 16px var(--sans);
+  outline: none;
+}
+.input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-soft);
+}
+
+.hint {
+  margin: 0;
+  font: 400 13px/1.4 var(--sans);
+  color: var(--text-3);
+}

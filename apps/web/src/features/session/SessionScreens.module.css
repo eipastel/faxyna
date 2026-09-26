@@ -1,0 +1,125 @@
+.page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  text-align: center;
+}
+
+.logo {
+  align-self: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--blue);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.18);
+}
+
+.title {
+  margin: 4px 0 0;
+  font: 600 22px/1.2 var(--sans);
+  letter-spacing: -0.02em;
+}
+
+.text {
+  margin: 0 0 8px;
+  font: 400 15px/1.5 var(--sans);
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.invite {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  text-align: left;
+}
+.inviteName {
+  flex: 1;
+  min-width: 0;
+  font: 600 15px var(--sans);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+.label {
+  font: 500 13px var(--sans);
+  color: var(--text-2);
+}
+.input {
+  height: 46px;
+  padding: 0 14px;
+  margin-bottom: 4px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  /* 16px keeps iOS Safari from zooming on focus. */
+  font: 500 16px var(--sans);
+  outline: none;
+}
+.input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-soft);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: 400 12.5px var(--mono);
+  color: var(--text-3);
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.twoCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.link {
+  align-self: center;
+  border: none;
+  background: none;
+  padding: 4px;
+  font: 400 13px var(--sans);
+  color: var(--text-3);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.error {
+  margin: 0;
+  font: 400 14px var(--sans);
+  color: var(--red);
+}

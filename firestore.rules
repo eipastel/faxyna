@@ -1,0 +1,57 @@
+rules_version = '2';
+
+// houses/{id}: members read and write; invited emails can read and join.
+// houses/{id}/tasks: members only.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function uid() {
+      return request.auth.uid;
+    }
+
+    function email() {
+      return request.auth.token.email.lower();
+    }
+
+    function isMember(house) {
+      return request.auth != null && uid() in house.memberUids;
+    }
+
+    function isInvited(house) {
+      return request.auth != null && request.auth.token.email_verified == true && email() in house.invites;
+    }
+
+    // An invited user may only add themselves: uid to members, own person entry, own email out of invites.
+    function isJoining() {
+      let before = resource.data;
+      let after = request.resource.data;
+      return after.diff(before).affectedKeys().hasOnly(['memberUids', 'invites', 'people'])
+        && after.memberUids == (uid() in before.memberUids ? before.memberUids : before.memberUids.concat([uid()]))
+        && after.invites == before.invites.removeAll([email()])
+        && after.people.diff(before.people).affectedKeys().hasOnly([uid()]);
+    }
+
+    match /houses/{houseId} {
+      allow read: if isMember(resource.data) || isInvited(resource.data);
+
+      allow create: if request.auth != null
+        && request.resource.data.ownerUid == uid()
+        && request.resource.data.memberUids == [uid()]
+        && request.resource.data.invites == []
+        && request.resource.data.people.keys().hasOnly([uid()]);
+
+      // ponytail: members can't remove members yet; add an owner-only path when needed.
+      // Members edit the house but only their own person entry.
+      allow update: if (isMember(resource.data)
+          && request.resource.data.ownerUid == resource.data.ownerUid
+          && request.resource.data.memberUids == resource.data.memberUids
+          && request.resource.data.people.diff(resource.data.people).affectedKeys().hasOnly([uid()]))
+        || (isInvited(resource.data) && isJoining());
+
+      allow delete: if request.auth != null && resource.data.ownerUid == uid();
+
+      match /tasks/{taskId} {
+        allow read, write: if isMember(get(/databases/$(database)/documents/houses/$(houseId)).data);
+      }
+    }
+  }
+}

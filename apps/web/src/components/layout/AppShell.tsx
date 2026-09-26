@@ -4,7 +4,7 @@ import { useEffect, type ReactNode } from 'react';
 import { InstallCard } from '@/features/install/InstallCard';
 import { TaskSheetProvider } from '@/features/tasks/TaskSheetProvider';
 import { DataProvider } from '@/providers/DataProvider';
-import { GatewayProvider } from '@/providers/GatewayProvider';
+import { SessionProvider } from '@/providers/SessionProvider';
 import { PersonFilterProvider } from '@/providers/PersonFilterProvider';
 import { ToastProvider } from '@/providers/ToastProvider';
 import { BottomDock } from './BottomDock';
@@ -20,7 +20,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <GatewayProvider>
+    <SessionProvider>
       <DataProvider>
         <ToastProvider>
           <PersonFilterProvider>
@@ -36,6 +36,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           </PersonFilterProvider>
         </ToastProvider>
       </DataProvider>
-    </GatewayProvider>
+    </SessionProvider>
   );
 }
