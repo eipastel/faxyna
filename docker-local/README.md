@@ -29,5 +29,5 @@ FAXYNA_PORT=12345 docker compose up -d --build
 
 ## Notes
 
-- Data lives in the browser's `localStorage` (the current gateway implementation), so it is not stored in the container and survives rebuilds.
+- Data lives in Firebase (project `faxyna-app`), not in the container, so it survives rebuilds. Sign-in only works on hosts listed in Firebase Auth's authorized domains (`localhost` is); add your LAN host there to open it from other devices.
 - The build fails if the core tests fail.
