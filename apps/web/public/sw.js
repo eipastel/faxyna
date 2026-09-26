@@ -1,9 +1,9 @@
-// Offline support for the installed app. Data lives in localStorage, so once
-// the pages and their assets are cached the whole app works without network.
+// Offline support for the installed app. This caches the pages and their assets;
+// data works offline through Firestore's own IndexedDB cache.
 // ponytail: one cache that only grows; old hashed chunks pile up across deploys.
 // Bump CACHE to wipe it if it ever matters.
-const CACHE = 'faxyna-v1';
-const PAGES = ['/', '/semana', '/comodos', '/progresso'];
+const CACHE = 'faxyna-v2';
+const PAGES = ['/', '/semana', '/comodos', '/progresso', '/casa'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

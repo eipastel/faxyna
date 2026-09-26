@@ -1,1 +1,0 @@
-export { LocalStorageGateway } from './LocalStorageGateway';

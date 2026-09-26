@@ -26,7 +26,7 @@ export interface SettingsRepository {
 
 /**
  * The app's single data access point. The front end only knows this interface;
- * implementations: `@faxyna/data-local` (localStorage). Future: Firebase.
+ * implementation: `@faxyna/data-firebase` (Firestore).
  */
 export interface DataGateway {
   tasks: TaskRepository;

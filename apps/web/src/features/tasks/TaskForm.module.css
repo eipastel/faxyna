@@ -16,7 +16,6 @@
   letter-spacing: -0.02em;
 }
 
-.input,
 .textarea {
   border-radius: var(--radius);
   border: 1px solid var(--line-strong);
@@ -24,16 +23,9 @@
   color: var(--text);
   outline: none;
 }
-.input:focus,
 .textarea:focus {
   border-color: var(--blue);
   box-shadow: 0 0 0 3px var(--blue-soft);
-}
-
-.input {
-  height: 46px;
-  padding: 0 14px;
-  font: 500 15px var(--sans);
 }
 
 .textarea {
@@ -138,7 +130,6 @@
 
 /* iOS Safari zooms the page into any focused field whose text is under 16px. */
 @media (pointer: coarse) {
-  .input,
   .textarea,
   .dateInput {
     font-size: 16px;

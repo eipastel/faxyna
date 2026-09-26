@@ -1,0 +1,43 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 10px 8px 14px;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  font: 500 15px var(--sans);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font: 400 12.5px var(--mono);
+  color: var(--text-3);
+  padding-right: 4px;
+}
+
+.inviteForm {
+  display: flex;
+  gap: 8px;
+}
+
+.input {
+  flex: 1;
+}
+
+.hint {
+  margin: 0;
+  font: 400 13px/1.4 var(--sans);
+  color: var(--text-3);
+}

@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import type { Priority, Task } from '@faxyna/core';
-import { minutesLabel } from '@faxyna/core';
-import { Button, Chip, Dot, Icon, IconButton } from '@/components/ui';
+import { minutesLabel, type Priority, type Task } from '@faxyna/core';
+import { Button, Chip, Dot, Icon, IconButton, Input } from '@/components/ui';
 import { roomColors } from '@/lib/roomColors';
 import { useData } from '@/providers/DataProvider';
 import { Field } from './Field';
@@ -55,8 +54,7 @@ export function TaskForm({ task, roomId }: { task?: Task; roomId?: string }) {
         <IconButton icon="close" label="Fechar" onClick={close} />
       </div>
 
-      <input
-        className={styles.input}
+      <Input
         value={values.name}
         onChange={(e) => set({ name: e.target.value })}
         placeholder="O que precisa ser feito? ex: limpar o fogão"

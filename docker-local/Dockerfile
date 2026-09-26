@@ -12,7 +12,7 @@ RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY apps/web/package.json apps/web/
 COPY packages/core/package.json packages/core/
-COPY packages/data-local/package.json packages/data-local/
+COPY packages/data-firebase/package.json packages/data-firebase/
 RUN pnpm install --frozen-lockfile
 
 COPY apps apps

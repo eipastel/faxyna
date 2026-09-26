@@ -10,6 +10,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: '/semana', label: 'Semana', icon: 'calendar_view_week' },
   { href: '/comodos', label: 'Cômodos', icon: 'meeting_room' },
   { href: '/progresso', label: 'Progresso', icon: 'insights' },
+  { href: '/casa', label: 'Casa', icon: 'home' },
 ];
 
 export const isActive = (pathname: string, href: string) =>

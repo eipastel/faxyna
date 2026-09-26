@@ -3,6 +3,7 @@ export { Button, IconButton } from './Button';
 export { Card, DashedNote } from './Card';
 export { Chip } from './Chip';
 export { Icon } from './Icon';
+export { Input } from './Input';
 export { Pill } from './Pill';
 export { ProgressBar } from './ProgressBar';
 export { Segmented, type SegmentedOption } from './Segmented';
