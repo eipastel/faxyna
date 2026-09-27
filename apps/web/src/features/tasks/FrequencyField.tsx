@@ -94,6 +94,10 @@ export function FrequencyField({ values: v, set }: Props) {
               <button key={label} type="button" className={styles.preset} onClick={() => set({ days })}>{label}</button>
             ))}
           </div>
+          <div className={`${styles.wrapRow} ${styles.divided}`}>
+            <span className={styles.inlineLabel}>Começa</span>
+            <DateChips value={v.start} onChange={(start) => set({ start })} options={[['Hoje', today], ['Amanhã', tomorrow]]} />
+          </div>
         </div>
       )}
 

@@ -7,7 +7,8 @@ export type Frequency =
   | { type: 'once'; date: IsoDate }
   /** `weekday`: each date moves to the nearest one of that day (0 = Sunday), e.g. every 30 days on a Sunday. */
   | { type: 'interval'; every: number; start: IsoDate; weekday?: number }
-  | { type: 'weekdays'; days: number[] }; // 0 = Sunday … 6 = Saturday
+  /** `days`: 0 = Sunday … 6 = Saturday. `start`: nothing is due before it (absent on older tasks). */
+  | { type: 'weekdays'; days: number[]; start?: IsoDate };
 
 export type FrequencyType = Frequency['type'];
 

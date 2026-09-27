@@ -31,7 +31,7 @@ export function initialValues(task: Task | undefined, d: Defaults): TaskFormValu
     name: task?.name ?? '',
     freqType: f?.type ?? 'interval',
     every: f?.type === 'interval' ? f.every : 3,
-    start: f?.type === 'interval' ? f.start : d.today,
+    start: (f?.type === 'interval' || f?.type === 'weekdays' ? f.start : undefined) ?? d.today,
     weekday: f?.type === 'interval' ? (f.weekday ?? null) : null,
     days: f?.type === 'weekdays' ? f.days : [dayOfWeek(d.today)],
     date: f?.type === 'once' ? f.date : d.today,
@@ -52,7 +52,7 @@ export function buildFrequency(v: TaskFormValues): Frequency {
     const f: Frequency = { type: 'interval', every: v.every, start: v.start };
     return v.weekday !== null && v.every >= MIN_EVERY_FOR_WEEKDAY ? { ...f, weekday: v.weekday } : f;
   }
-  return { type: 'weekdays', days: [...v.days] };
+  return { type: 'weekdays', days: [...v.days], start: v.start };
 }
 
 /** Blue line below the frequency ("A cada 3 dias · primeira hoje"). */
@@ -81,7 +81,7 @@ export function toTask(v: TaskFormValues, existing: Task | undefined, today: Iso
     minutes: v.minutes, priority: v.priority, notes: v.notes.trim(),
   };
   if (existing) {
-    const nextDue = sameFrequency(existing.freq, freq) ? existing.nextDue : firstDue(freq, today);
+    const nextDue = sameFrequency(existing.freq, freq, today) ? existing.nextDue : firstDue(freq, today);
     return { ...existing, ...base, nextDue, archived: !nextDue };
   }
   return { id: newId(), ...base, nextDue: firstDue(freq, today), archived: false, streak: 0, history: [] };

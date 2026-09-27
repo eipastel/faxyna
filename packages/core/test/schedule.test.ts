@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addDays, completeTask, dayOfWeek, joinNames, minutesLabel, nearestWeekday, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
+  sameFrequency,
   skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
 } from '../src';
 
@@ -26,6 +27,16 @@ describe('frequência', () => {
     expect(firstDue({ type: 'weekdays', days: [3] }, MON)).toBe('2024-01-03');
     expect(firstDue({ type: 'weekdays', days: [1] }, MON)).toBe(MON);
     expect(firstDue({ type: 'once', date: '2024-02-01' }, MON)).toBe('2024-02-01');
+  });
+
+  it('dias da semana respeitam a data de início', () => {
+    // Wednesdays starting 2024-01-15: the first is 01-17, not this week's 01-03.
+    expect(firstDue({ type: 'weekdays', days: [3], start: '2024-01-15' }, MON)).toBe('2024-01-17');
+    expect(firstDue({ type: 'weekdays', days: [3], start: '2023-12-01' }, MON)).toBe('2024-01-03');
+    // A start already reached is the same schedule as none (older tasks), in any key order.
+    expect(sameFrequency({ type: 'weekdays', days: [3] }, { type: 'weekdays', days: [3], start: MON }, MON)).toBe(true);
+    expect(sameFrequency({ days: [3], type: 'weekdays' } as never, { type: 'weekdays', days: [3] }, MON)).toBe(true);
+    expect(sameFrequency({ type: 'weekdays', days: [3] }, { type: 'weekdays', days: [3], start: '2024-01-15' }, MON)).toBe(false);
   });
 
   it('occurrences projeta dentro do intervalo', () => {
