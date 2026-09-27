@@ -38,3 +38,100 @@ a:focus-visible,
   width: 0;
   height: 0;
 }
+
+/* App feel: no tap flash, no double-tap zoom delay, no whole-page rubber band, no long-press callout. */
+html {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+button,
+a,
+[role='button'] {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+button:not(:disabled):active,
+a:active {
+  transform: scale(0.97);
+}
+
+/* Shared entrance for list items; set --i inline for the stagger. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.rise {
+  animation: rise var(--dur-slow) var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 8) * var(--stagger));
+}
+
+/* Reduced motion zeroes the motion tokens (tokens.css), which every animation here uses. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Tab navigation: the page slides a little in the direction of the tab (PageTransition). */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.nav-forward),
+::view-transition-old(.nav-back) {
+  animation:
+    var(--dur-fast) ease-in both fade-out,
+    var(--dur) var(--ease-out) both slide-out;
+}
+::view-transition-new(.nav-forward),
+::view-transition-new(.nav-back) {
+  animation:
+    var(--dur) var(--ease-out) var(--dur-fast) both fade-in,
+    var(--dur-slow) var(--ease-out) both slide-in;
+}
+::view-transition-old(.nav-forward) {
+  --slide: -32px;
+}
+::view-transition-new(.nav-forward) {
+  --slide: 32px;
+}
+::view-transition-old(.nav-back) {
+  --slide: 32px;
+}
+::view-transition-new(.nav-back) {
+  --slide: -32px;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes slide-in {
+  from {
+    translate: var(--slide);
+  }
+}
+@keyframes slide-out {
+  to {
+    translate: var(--slide);
+  }
+}

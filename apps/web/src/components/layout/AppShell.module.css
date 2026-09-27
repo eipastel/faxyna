@@ -1,6 +1,6 @@
 .shell {
   display: flex;
-  min-height: 100vh;
+  min-height: 100dvh;
   align-items: flex-start;
 }
 
@@ -10,7 +10,7 @@
   min-width: 0;
   max-width: 440px;
   margin: 0 auto;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg);
   border-left: 1px solid var(--line);
   border-right: 1px solid var(--line);
@@ -23,5 +23,17 @@
     background: transparent;
     border-color: transparent;
     padding-bottom: 64px;
+  }
+}
+
+/* The app eases in as the splash fades out (Splash.tsx sets data-ready). */
+:global(html[data-ready]) .main {
+  animation: shell-in var(--dur-slow) var(--ease-out);
+}
+
+@keyframes shell-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
   }
 }
