@@ -66,14 +66,19 @@ export function TaskForm({ task, roomId }: { task?: Task; roomId?: string }) {
 
       <FrequencyField values={values} set={set} />
 
-      <Field label="Cômodo">
+      {/* More than one when they're cleaned together, e.g. an open-plan living room and kitchen. */}
+      <Field label="Cômodos · um ou mais">
         <div className={styles.roomGrid}>
-          {rooms.map((r) => (
-            <Chip key={r.id} shape="box" selected={values.roomId === r.id} className={styles.roomChip} onClick={() => set({ roomId: r.id })}>
-              <Icon name={r.icon} size={17} color={roomColors(r.hue).chipInk} />
-              <span className={styles.ellipsis}>{r.name}</span>
-            </Chip>
-          ))}
+          {rooms.map((r) => {
+            const selected = values.roomIds.includes(r.id);
+            const toggle = () => set({ roomIds: selected ? values.roomIds.filter((id) => id !== r.id) : [...values.roomIds, r.id] });
+            return (
+              <Chip key={r.id} shape="box" selected={selected} className={styles.roomChip} onClick={toggle}>
+                <Icon name={r.icon} size={17} color={roomColors(r.hue).chipInk} />
+                <span className={styles.ellipsis}>{r.name}</span>
+              </Chip>
+            );
+          })}
         </div>
       </Field>
 

@@ -8,6 +8,10 @@ export const MONTHS_FULL = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', '
 
 export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+/** "Sala", "Sala e Cozinha", "Sala, Cozinha e Quarto". */
+export const joinNames = (names: string[]) =>
+  names.length < 2 ? names.join('') : names.slice(0, -1).join(', ') + ' e ' + names[names.length - 1];
+
 export const plural = (n: number, one: string, many: string) => n + ' ' + (n === 1 ? one : many);
 
 export const fmtShort = (s: IsoDate) => {

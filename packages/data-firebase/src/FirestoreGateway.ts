@@ -14,6 +14,12 @@ function houseField<T>(db: Firestore, houseId: string, pick: (h: HouseDoc) => T[
   };
 }
 
+/** Tasks saved before multi-room support have a single `roomId`. */
+const toTask = (data: unknown): Task => {
+  const { roomId, ...t } = data as Task & { roomId?: string };
+  return { ...t, roomIds: t.roomIds ?? (roomId ? [roomId] : []) };
+};
+
 /** Gateway scoped to one house. */
 export class FirestoreGateway implements DataGateway {
   tasks: TaskRepository;
@@ -27,8 +33,8 @@ export class FirestoreGateway implements DataGateway {
     const withDefaults = (h: HouseDoc) => ({ ...DEFAULT_SETTINGS, ...h.settings });
 
     this.tasks = {
-      list: async () => (await getDocs(tasks)).docs.map((d) => d.data() as Task),
-      subscribe: (listener) => onSnapshot(tasks, (s) => listener(s.docs.map((d) => d.data() as Task))),
+      list: async () => (await getDocs(tasks)).docs.map((d) => toTask(d.data())),
+      subscribe: (listener) => onSnapshot(tasks, (s) => listener(s.docs.map((d) => toTask(d.data())))),
       save: (task) => setDoc(doc(tasks, task.id), task),
       remove: (id) => deleteDoc(doc(tasks, id)),
     };

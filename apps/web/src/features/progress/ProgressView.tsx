@@ -1,6 +1,6 @@
 'use client';
 
-import { fmtRange, fmtShort, historyFeed, historyLabel, minutesLabel, topStreaks, weekStats } from '@faxyna/core';
+import { fmtRange, fmtShort, historyFeed, historyLabel, joinNames, minutesLabel, topStreaks, weekStats } from '@faxyna/core';
 import { PageContent, PageHeader } from '@/components/layout/PageHeader';
 import { Avatar, Card, DashedNote, Eyebrow, Icon, Meta, Pill, ProgressBar, SectionHeader } from '@/components/ui';
 import { NoTasksState } from '@/features/tasks/NoTasksState';
@@ -10,7 +10,7 @@ import { useWeekProgress } from './useWeekProgress';
 import styles from './ProgressView.module.css';
 
 export function ProgressView() {
-  const { tasks, people, room, person } = useData();
+  const { tasks, people, taskRooms, person } = useData();
   const { openDetail } = useTaskSheet();
   const week = useWeekProgress();
   const streaks = topStreaks(tasks);
@@ -63,7 +63,7 @@ export function ProgressView() {
                     <Icon name="local_fire_department" size={20} filled color="var(--amber)" />
                     <span className={styles.rowText}>
                       <span className={styles.rowName}>{t.name}</span>
-                      <Meta>{room(t.roomId)?.name}</Meta>
+                      <Meta>{joinNames(taskRooms(t).map((x) => x.name))}</Meta>
                     </span>
                     <span className={styles.streakCount}>{t.streak + (t.streak === 1 ? ' vez' : ' seguidas')}</span>
                   </button>
