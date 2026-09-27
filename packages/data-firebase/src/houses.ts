@@ -1,5 +1,5 @@
 import {
-  arrayRemove, arrayUnion, collection, deleteField, doc, getDocs, onSnapshot, query, serverTimestamp, setDoc, updateDoc,
+  arrayRemove, arrayUnion, collection, deleteField, doc, getDocFromServer, getDocs, onSnapshot, query, serverTimestamp, setDoc, updateDoc,
   where, writeBatch,
   type Firestore, type QueryDocumentSnapshot,
 } from 'firebase/firestore';
@@ -51,10 +51,10 @@ const settling = new Set<string>();
 /** Open watchHouses listeners, re-run once a house settles. */
 const refreshers = new Set<() => void>();
 
-async function settle(houseId: string, write: Promise<void>) {
+async function settle(houseId: string, write: () => Promise<void>) {
   settling.add(houseId);
   try {
-    await write;
+    await write();
   } finally {
     settling.delete(houseId);
     refreshers.forEach((refresh) => refresh());
@@ -99,7 +99,7 @@ export function watchHouses(
 
 export async function createHouse(db: Firestore, user: Member, name: string): Promise<string> {
   const ref = doc(collection(db, 'houses'));
-  await settle(ref.id, setDoc(ref, {
+  await settle(ref.id, () => setDoc(ref, {
     name,
     ownerUid: user.uid,
     memberUids: [user.uid],
@@ -113,20 +113,20 @@ export async function createHouse(db: Firestore, user: Member, name: string): Pr
 }
 
 export const joinHouse = (db: Firestore, houseId: string, user: Member) =>
-  settle(houseId, updateDoc(houseRef(db, houseId), {
+  settle(houseId, () => updateDoc(houseRef(db, houseId), {
     memberUids: arrayUnion(user.uid),
     invites: arrayRemove(user.email.toLowerCase()),
     [`people.${user.uid}`]: { name: user.name, joinedAt: Date.now() },
   }));
 
 /**
- * Accepts an invite while already living in a house: joins the new house, then
- * leaves the current one. As its last member, the current house is deleted with its tasks.
+ * Leaves a house. As its last member (checked on the server, not the cached copy)
+ * the house is deleted with its tasks instead.
  */
-export async function moveToHouse(db: Firestore, from: House, toId: string, user: Member) {
-  await joinHouse(db, toId, user);
-  const ref = houseRef(db, from.id);
-  if (from.memberUids.length > 1) {
+export async function leaveHouse(db: Firestore, houseId: string, user: Member) {
+  const ref = houseRef(db, houseId);
+  const { memberUids } = (await getDocFromServer(ref)).data() as HouseDoc;
+  if (memberUids.length > 1) {
     await updateDoc(ref, { memberUids: arrayRemove(user.uid), [`people.${user.uid}`]: deleteField() });
     return;
   }
@@ -135,6 +135,16 @@ export async function moveToHouse(db: Firestore, from: House, toId: string, user
   (await getDocs(collection(ref, 'tasks'))).forEach((t) => batch.delete(t.ref));
   batch.delete(ref);
   await batch.commit();
+}
+
+/**
+ * Accepts an invite while already living in a house: joins the new one, then leaves
+ * the current one. If leaving fails the user is in both; the Casa tab lists the
+ * other house so they can finish the move.
+ */
+export async function moveToHouse(db: Firestore, fromId: string, toId: string, user: Member) {
+  await joinHouse(db, toId, user);
+  await leaveHouse(db, fromId, user);
 }
 
 export const inviteToHouse = (db: Firestore, houseId: string, email: string) =>

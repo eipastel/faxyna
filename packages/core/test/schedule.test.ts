@@ -101,6 +101,12 @@ describe('visões', () => {
     expect(agenda[0].entries).toHaveLength(1); // overdue shows up on today
   });
 
+  it('filtro por pessoa inclui tarefas sem responsável', () => {
+    const mine = task({ id: 'a', personId: 'thiago' });
+    const other = task({ id: 'b', personId: 'julia' });
+    const anyone = task({ id: 'c', personId: null });
+    expect(todayGroups([mine, other, anyone], MON, 'thiago').today.map((t) => t.id)).toEqual(['a', 'c']);
+  });
 
   it('dueStatus', () => {
     expect(dueStatus('2023-12-30', MON)).toEqual({ label: 'Atrasada 2d', tone: 'overdue' });

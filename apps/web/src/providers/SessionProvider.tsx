@@ -13,6 +13,8 @@ interface Session {
   house: House;
   /** Other houses this user was invited to. */
   invites: House[];
+  /** Other houses this user is already in (only after a move that did not finish). */
+  otherHouses: House[];
   signOut(): void;
 }
 
@@ -51,7 +53,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   if (!house || !gateway) return <><SplashDismiss /><HouseSetupScreen member={member} invites={houses!.invites} /></>;
 
   return (
-    <SessionContext.Provider value={{ member, house, invites: houses!.invites, signOut: signOutUser }}>
+    <SessionContext.Provider value={{ member, house, invites: houses!.invites, otherHouses: houses!.mine.filter((h) => h.id !== house.id), signOut: signOutUser }}>
       <GatewayProvider gateway={gateway}>{children}</GatewayProvider>
     </SessionContext.Provider>
   );

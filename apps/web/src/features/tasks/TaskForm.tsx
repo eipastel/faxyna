@@ -5,6 +5,7 @@ import { minutesLabel, type Priority, type Task } from '@faxyna/core';
 import { Button, Chip, Dot, Icon, IconButton, Input } from '@/components/ui';
 import { roomColors } from '@/lib/roomColors';
 import { useData } from '@/providers/DataProvider';
+import { useSession } from '@/providers/SessionProvider';
 import { Field } from './Field';
 import { FrequencyField } from './FrequencyField';
 import { initialValues, newTaskId, toTask, validate, type TaskFormValues } from './formValues';
@@ -22,10 +23,11 @@ const MINUTES = [1, 5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300];
 /** Task create and edit form. */
 export function TaskForm({ task, roomId }: { task?: Task; roomId?: string }) {
   const { rooms, people, today } = useData();
+  const { member } = useSession();
   const { create, update } = useTaskActions();
   const { close, openDetail } = useTaskSheet();
   const [values, setValues] = useState<TaskFormValues>(() =>
-    initialValues(task, { today, roomId: roomId ?? rooms[0]?.id ?? '', personId: people[0]?.id ?? null }),
+    initialValues(task, { today, roomId: roomId ?? rooms[0]?.id ?? '', personId: member.uid }),
   );
   const [error, setError] = useState<string | null>(null);
 
