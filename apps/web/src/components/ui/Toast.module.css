@@ -42,7 +42,7 @@
   font: 400 14px/1.35 var(--sans);
 }
 
-.undo {
+.action {
   height: 30px;
   padding: 0 10px;
   border-radius: var(--radius-sm);
@@ -52,6 +52,6 @@
   font: 600 14px var(--sans);
   cursor: pointer;
 }
-.undo:hover {
+.action:hover {
   background: rgba(255, 255, 255, 0.1);
 }

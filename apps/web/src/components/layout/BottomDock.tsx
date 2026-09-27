@@ -24,7 +24,7 @@ export function BottomDock() {
     const t = setTimeout(() => setShownToast(null), 240); // exit animation (--dur)
     return () => clearTimeout(t);
   }, [toast, shownToast]);
-  const undo = current?.undo;
+  const action = current?.action;
   const tab = tabIndex(pathname);
 
   // The FAB shrinks to its icon while scrolling down and comes back on the way up.
@@ -52,7 +52,7 @@ export function BottomDock() {
             error={current.error}
             leaving={!toast}
             onDismiss={dismiss}
-            onUndo={undo && (() => { undo(); dismiss(); })}
+            action={action && { label: action.label, run: () => { action.run(); dismiss(); } }}
           />
         )}
       </div>

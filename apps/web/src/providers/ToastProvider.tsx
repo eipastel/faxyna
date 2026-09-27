@@ -6,8 +6,11 @@ export interface ToastState {
   /** Changes on every show, so a replacing toast animates in again. */
   id: number;
   message: string;
-  undo?: () => void;
+  /** Button on the toast ("Desfazer", "Atualizar"); tapping it also dismisses the toast. */
+  action?: { label: string; run(): void };
   error?: boolean;
+  /** Stays until dismissed instead of fading after a few seconds. */
+  sticky?: boolean;
 }
 
 interface ToastApi {
@@ -31,7 +34,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const showToast = useCallback((message: string, options?: Omit<ToastState, 'id' | 'message'>) => {
     clearTimeout(timer.current);
     setToast({ id: Date.now(), message, ...options });
-    timer.current = setTimeout(() => setToast(null), DURATION_MS);
+    if (!options?.sticky) timer.current = setTimeout(() => setToast(null), DURATION_MS);
   }, []);
 
   useEffect(() => () => clearTimeout(timer.current), []);

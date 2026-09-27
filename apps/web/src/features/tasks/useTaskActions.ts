@@ -21,7 +21,7 @@ export function useTaskActions() {
     async (write: Promise<void>, message?: string, undo?: () => Promise<void>) => {
       try {
         await write;
-        if (message) showToast(message, { undo: undo && (() => void run(undo())) });
+        if (message) showToast(message, { action: undo && { label: 'Desfazer', run: () => void run(undo()) } });
       } catch {
         showToast('Não foi possível salvar. Tente de novo.', { error: true });
       }
