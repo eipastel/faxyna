@@ -38,3 +38,49 @@ a:focus-visible,
   width: 0;
   height: 0;
 }
+
+/* App feel: no tap flash, no double-tap zoom delay, no whole-page rubber band, no long-press callout. */
+html {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+button,
+a,
+[role='button'] {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+/* :where keeps this at zero specificity so component rules can override it.
+   Pressing applies at once (iOS shows :active only briefly); releasing eases back. */
+:where(button:not(:disabled), a):active {
+  transform: scale(0.95);
+  transition-duration: 0s;
+}
+
+/* Shared entrance for list items; set --i inline for the stagger. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.rise {
+  animation: rise var(--dur-enter) var(--ease-enter) both;
+  animation-delay: calc(min(var(--i, 0), 8) * var(--stagger));
+}
+
+
+/* Hold entrances until the splash lifts (Splash.tsx sets data-ready), or they finish unseen. */
+html:not([data-ready]) .rise {
+  animation-play-state: paused;
+}

@@ -74,8 +74,8 @@ export function TodayView() {
             <section key={group.title} className={styles.group}>
               <SectionHeader title={group.title} dot={group.dot} meta={group.meta} />
               <Card list>
-                {group.tasks.map((t) => (
-                  <TaskRow key={t.id} task={t} done={group.done} />
+                {group.tasks.map((t, i) => (
+                  <TaskRow key={t.id} task={t} done={group.done} index={i} />
                 ))}
               </Card>
             </section>

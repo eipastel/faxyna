@@ -100,7 +100,7 @@ export function TaskForm({ task, roomId }: { task?: Task; roomId?: string }) {
       </div>
 
       <Field label="Tempo estimado">
-        <div className={styles.bleedRow}>
+        <div className={styles.bleedRow} data-no-sheet-drag>
           {MINUTES.map((n) => (
             <Chip key={n} selected={values.minutes === n} className={styles.minuteChip} onClick={() => set({ minutes: n })}>
               {minutesLabel(n)}

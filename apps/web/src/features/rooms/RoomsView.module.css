@@ -47,8 +47,28 @@
   font: 600 15px var(--sans);
 }
 
+/* Open/close animates the row track (1fr ↔ 0fr) so the content keeps its height. */
+.collapse {
+  display: grid;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  transition: grid-template-rows var(--dur) var(--ease-out);
+}
+.collapsed {
+  grid-template-rows: 0fr;
+}
+
+.chevron {
+  transition: transform var(--dur) var(--ease-out);
+}
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
 /* Rows separated by a border, like a list (the "Adicionar" button has its own) */
 .body {
+  min-height: 0;
+  overflow: hidden;
   border-top: 1px solid var(--line);
 }
 .body > * {

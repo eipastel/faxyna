@@ -15,3 +15,6 @@ export const NAV_ITEMS: NavItem[] = [
 
 export const isActive = (pathname: string, href: string) =>
   href === '/' ? pathname === '/' : pathname.replace(/\/$/, '') === href;
+
+/** Position of the route among the tabs (-1 when it isn't a tab). */
+export const tabIndex = (pathname: string) => NAV_ITEMS.findIndex((item) => isActive(pathname, item.href));

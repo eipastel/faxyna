@@ -3,12 +3,38 @@
   margin: 0 16px 10px;
   padding: 10px 10px 10px 14px;
   border-radius: var(--radius-lg);
-  background: var(--hover);
-  border: 1px solid var(--line-strong);
-  box-shadow: 0 10px 30px rgba(24, 24, 27, 0.1);
+  background: var(--text);
+  color: #ffffff;
+  box-shadow: 0 12px 32px rgba(24, 24, 27, 0.24);
   display: flex;
   align-items: center;
   gap: 10px;
+  touch-action: pan-y;
+  transform: translateX(var(--x, 0px));
+  transition:
+    transform var(--dur) var(--ease-out),
+    opacity var(--dur) var(--ease-out);
+  animation: toast-in var(--dur-slow) var(--ease-spring);
+}
+.dragging {
+  transition: none;
+}
+.leaving {
+  animation: toast-out var(--dur) var(--ease-out) forwards;
+  pointer-events: none;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+}
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
 }
 
 .message {
@@ -22,10 +48,10 @@
   border-radius: var(--radius-sm);
   border: none;
   background: transparent;
-  color: var(--blue-ink);
-  font: 500 14px var(--sans);
+  color: #93c5fd;
+  font: 600 14px var(--sans);
   cursor: pointer;
 }
 .undo:hover {
-  background: var(--blue-soft);
+  background: rgba(255, 255, 255, 0.1);
 }
