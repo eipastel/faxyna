@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { capitalize, fmtLong, fmtShort, freqLabel, historyLabel, lastCompletion, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
+import { capitalize, fmtLong, fmtShort, freqLabel, historyLabel, joinNames, lastCompletion, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
 import { Button, Card, Dot, Eyebrow, Icon, IconButton } from '@/components/ui';
 import { roomColors } from '@/lib/roomColors';
 import { useData } from '@/providers/DataProvider';
@@ -13,11 +13,12 @@ const TONE_COLOR = { neutral: 'var(--text-2)', today: 'var(--blue-ink)', overdue
 
 /** Task details: complete, postpone, skip, edit, delete and latest entries. */
 export function TaskDetail({ task }: { task: Task }) {
-  const { today, room, person } = useData();
+  const { today, taskRooms, person } = useData();
   const actions = useTaskActions();
   const { close, openEdit } = useTaskSheet();
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const r = room(task.roomId);
+  const rooms = taskRooms(task);
+  const r = rooms[0];
   const who = person(task.personId);
   const doneToday = lastCompletion(task)?.date === today;
 
@@ -48,7 +49,7 @@ export function TaskDetail({ task }: { task: Task }) {
         <div className={styles.heading}>
           <Eyebrow className={styles.roomLine}>
             {r && <Icon name={r.icon} size={15} color={roomColors(r.hue).ink} />}
-            {r?.name}
+            {joinNames(rooms.map((x) => x.name))}
           </Eyebrow>
           <h2 className={styles.title}>{task.name}</h2>
         </div>

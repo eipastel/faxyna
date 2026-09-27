@@ -5,8 +5,10 @@ export type Priority = 'alta' | 'media' | 'baixa';
 
 export type Frequency =
   | { type: 'once'; date: IsoDate }
-  | { type: 'interval'; every: number; start: IsoDate }
-  | { type: 'weekdays'; days: number[] }; // 0 = Sunday … 6 = Saturday
+  /** `weekday`: each date moves to the nearest one of that day (0 = Sunday), e.g. every 30 days on a Sunday. */
+  | { type: 'interval'; every: number; start: IsoDate; weekday?: number }
+  /** `days`: 0 = Sunday … 6 = Saturday. `start`: nothing is due before it (absent on older tasks). */
+  | { type: 'weekdays'; days: number[]; start?: IsoDate };
 
 export type FrequencyType = Frequency['type'];
 
@@ -19,7 +21,8 @@ export type HistoryEntry =
 export interface Task {
   id: string;
   name: string;
-  roomId: string;
+  /** One or more rooms done together (e.g. an open-plan living room and kitchen). */
+  roomIds: string[];
   personId: string | null;
   minutes: number;
   priority: Priority;

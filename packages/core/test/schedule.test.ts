@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, completeTask, dayOfWeek, minutesLabel, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
+  addDays, completeTask, dayOfWeek, joinNames, minutesLabel, nearestWeekday, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
+  sameFrequency,
   skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
 } from '../src';
 
@@ -8,7 +9,7 @@ import {
 const MON = '2024-01-01';
 
 const task = (over: Partial<Task> = {}): Task => ({
-  id: 't', name: 'Varrer', roomId: 'sala', personId: 'thiago', minutes: 10, priority: 'media', notes: '',
+  id: 't', name: 'Varrer', roomIds: ['sala'], personId: 'thiago', minutes: 10, priority: 'media', notes: '',
   freq: { type: 'interval', every: 3, start: MON }, nextDue: MON, archived: false, streak: 0, history: [], ...over,
 });
 
@@ -28,10 +29,32 @@ describe('frequência', () => {
     expect(firstDue({ type: 'once', date: '2024-02-01' }, MON)).toBe('2024-02-01');
   });
 
+  it('dias da semana respeitam a data de início', () => {
+    // Wednesdays starting 2024-01-15: the first is 01-17, not this week's 01-03.
+    expect(firstDue({ type: 'weekdays', days: [3], start: '2024-01-15' }, MON)).toBe('2024-01-17');
+    expect(firstDue({ type: 'weekdays', days: [3], start: '2023-12-01' }, MON)).toBe('2024-01-03');
+    // A start already reached is the same schedule as none (older tasks), in any key order.
+    expect(sameFrequency({ type: 'weekdays', days: [3] }, { type: 'weekdays', days: [3], start: MON }, MON)).toBe(true);
+    expect(sameFrequency({ days: [3], type: 'weekdays' } as never, { type: 'weekdays', days: [3] }, MON)).toBe(true);
+    expect(sameFrequency({ type: 'weekdays', days: [3] }, { type: 'weekdays', days: [3], start: '2024-01-15' }, MON)).toBe(false);
+  });
+
   it('occurrences projeta dentro do intervalo', () => {
     expect(occurrences(task(), MON, addDays(MON, 6))).toEqual([MON, '2024-01-04', '2024-01-07']);
     expect(occurrences(task({ freq: { type: 'weekdays', days: [1, 4] } }), MON, addDays(MON, 6))).toEqual([MON, '2024-01-04']);
     expect(occurrences(task({ archived: true }), MON, addDays(MON, 6))).toEqual([]);
+  });
+
+  it('a cada X dias num dia da semana vai para o mais próximo', () => {
+    const SUN = '2024-01-07';
+    expect([nearestWeekday('2024-02-06', 0), nearestWeekday('2024-02-03', 0), nearestWeekday(SUN, 0)]).toEqual(['2024-02-04', '2024-02-04', SUN]);
+    const freq = { type: 'interval' as const, every: 30, start: SUN, weekday: 0 };
+    // Done on Sunday: +30 is Tuesday 02-06, the nearest Sunday is 02-04 (two days earlier).
+    expect(completeTask(task({ freq, nextDue: SUN }), SUN).nextDue).toBe('2024-02-04');
+    // Created on a Tuesday: the first date is the nearest Sunday that isn't in the past.
+    expect(firstDue({ ...freq, start: '2024-01-09' }, '2024-01-09')).toBe('2024-01-14');
+    expect(freqLabel(freq)).toBe('A cada 30 dias, no domingo');
+    expect(freqLabel({ ...freq, weekday: 2 })).toBe('A cada 30 dias, na terça');
   });
 
   it('freqLabel', () => {
@@ -59,6 +82,7 @@ describe('ações', () => {
 
   it('rótulo de tempo', () => {
     expect([30, 60, 90, 125].map(minutesLabel)).toEqual(['30 min', '1h', '1h30', '2h05']);
+    expect([[], ['Sala'], ['Sala', 'Cozinha'], ['Sala', 'Cozinha', 'Quarto']].map(joinNames)).toEqual(['', 'Sala', 'Sala e Cozinha', 'Sala, Cozinha e Quarto']);
   });
 
   it('concluir atrasada zera streak; "uma vez" encerra', () => {

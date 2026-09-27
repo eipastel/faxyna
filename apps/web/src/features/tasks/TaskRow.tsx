@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type CSSProperties } from 'react';
-import { DONE_STATUS, dueStatus, freqLabel, lastCompletion, minutesLabel, type IsoDate, type Task } from '@faxyna/core';
+import { DONE_STATUS, dueStatus, freqLabel, joinNames, lastCompletion, minutesLabel, type IsoDate, type Task } from '@faxyna/core';
 import { Avatar, Dot, Icon, Pill } from '@/components/ui';
 import { cx } from '@/lib/cx';
 import { roomColors } from '@/lib/roomColors';
@@ -25,14 +25,18 @@ interface TaskRowProps extends TaskOccurrence {
   variant?: 'today' | 'agenda' | 'room';
   /** Position in the list, for the staggered entrance. */
   index?: number;
+  /** Rooms view: the card the row sits in; other linked rooms are listed as "também …". */
+  roomId?: string;
 }
 
 /** Task row reused in Today, Week (mobile) and Rooms. Swipe right completes, swipe left deletes. */
-export function TaskRow({ task, due, done, projected, variant = 'today', index }: TaskRowProps) {
-  const { today, room, person } = useData();
+export function TaskRow({ task, due, done, projected, variant = 'today', index, roomId }: TaskRowProps) {
+  const { today, taskRooms, person } = useData();
   const { complete, uncomplete, remove } = useTaskActions();
   const { openDetail } = useTaskSheet();
-  const r = room(task.roomId);
+  const rooms = taskRooms(task);
+  const r = rooms[0];
+  const others = rooms.filter((x) => x.id !== roomId);
   const who = person(task.personId);
   const status = done ? DONE_STATUS : dueStatus(due ?? task.nextDue, today, projected);
   const open = () => openDetail(task.id);
@@ -95,11 +99,14 @@ export function TaskRow({ task, due, done, projected, variant = 'today', index }
               {task.priority === 'alta' && <Icon name="priority_high" size={15} color="var(--amber)" />}
             </span>
             {variant === 'room' ? (
-              <span className={styles.meta}>{freqLabel(task.freq)}</span>
+              <span className={styles.meta}>
+                {freqLabel(task.freq)}
+                {others.length > 0 && ' · também ' + joinNames(others.map((x) => x.name))}
+              </span>
             ) : (
               <span className={cx(styles.meta, styles.metaLine)}>
                 {r && <Dot color={roomColors(r.hue).dot} />}
-                <span>{r?.name}</span>
+                <span>{joinNames(rooms.map((x) => x.name))}</span>
                 {variant === 'today' && <><span>·</span><span>{freqLabel(task.freq)}</span></>}
                 {!!task.minutes && <><span>·</span><span>{minutesLabel(task.minutes)}</span></>}
                 {variant === 'agenda' && projected && <><span>·</span><span>prevista</span></>}

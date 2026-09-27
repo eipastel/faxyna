@@ -21,7 +21,7 @@ export function RoomsView() {
       <PageContent gap={12}>
         <div className={styles.grid}>
           {rooms.map((room, i) => (
-            <RoomCard key={room.id} index={i} room={room} tasks={active.filter((t) => t.roomId === room.id).sort(byDueThenPriority)} />
+            <RoomCard key={room.id} index={i} room={room} tasks={active.filter((t) => t.roomIds.includes(room.id)).sort(byDueThenPriority)} />
           ))}
         </div>
       </PageContent>
@@ -56,7 +56,7 @@ function RoomCard({ room, tasks, index }: { room: Room; tasks: Task[]; index: nu
       <div className={cx(styles.collapse, !open && styles.collapsed)} inert={!open}>
         <div className={styles.body}>
           {tasks.map((t, i) => (
-            <TaskRow key={t.id} task={t} variant="room" index={i} />
+            <TaskRow key={t.id} task={t} variant="room" roomId={room.id} index={i} />
           ))}
           <button type="button" className={styles.add} onClick={() => openNew(room.id)}>
             <Icon name="add" size={18} />

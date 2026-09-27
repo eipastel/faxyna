@@ -8,9 +8,11 @@ export interface TaskFormValues {
   freqType: FrequencyType;
   every: number;
   start: IsoDate;
+  /** Every-X-days on the nearest of this weekday; null = any day. */
+  weekday: number | null;
   days: number[];
   date: IsoDate;
-  roomId: string;
+  roomIds: string[];
   personId: string | null;
   minutes: number;
   priority: Priority;
@@ -29,10 +31,11 @@ export function initialValues(task: Task | undefined, d: Defaults): TaskFormValu
     name: task?.name ?? '',
     freqType: f?.type ?? 'interval',
     every: f?.type === 'interval' ? f.every : 3,
-    start: f?.type === 'interval' ? f.start : d.today,
+    start: (f?.type === 'interval' || f?.type === 'weekdays' ? f.start : undefined) ?? d.today,
+    weekday: f?.type === 'interval' ? (f.weekday ?? null) : null,
     days: f?.type === 'weekdays' ? f.days : [dayOfWeek(d.today)],
     date: f?.type === 'once' ? f.date : d.today,
-    roomId: task?.roomId ?? d.roomId,
+    roomIds: task?.roomIds ?? (d.roomId ? [d.roomId] : []),
     personId: task ? task.personId : d.personId,
     minutes: task?.minutes ?? 15,
     priority: task?.priority ?? 'media',
@@ -40,10 +43,16 @@ export function initialValues(task: Task | undefined, d: Defaults): TaskFormValu
   };
 }
 
+/** Below a week, pinning the date to a weekday doesn't make sense. */
+export const MIN_EVERY_FOR_WEEKDAY = 7;
+
 export function buildFrequency(v: TaskFormValues): Frequency {
   if (v.freqType === 'once') return { type: 'once', date: v.date };
-  if (v.freqType === 'interval') return { type: 'interval', every: v.every, start: v.start };
-  return { type: 'weekdays', days: [...v.days] };
+  if (v.freqType === 'interval') {
+    const f: Frequency = { type: 'interval', every: v.every, start: v.start };
+    return v.weekday !== null && v.every >= MIN_EVERY_FOR_WEEKDAY ? { ...f, weekday: v.weekday } : f;
+  }
+  return { type: 'weekdays', days: [...v.days], start: v.start };
 }
 
 /** Blue line below the frequency ("A cada 3 dias · primeira hoje"). */
@@ -60,6 +69,7 @@ export const newTaskId = () => 't' + Date.now().toString(36) + Math.random().toS
 export function validate(v: TaskFormValues): string | null {
   if (!v.name.trim()) return 'Dê um nome para a tarefa.';
   if (v.freqType === 'weekdays' && !v.days.length) return 'Escolha pelo menos um dia da semana.';
+  if (!v.roomIds.length) return 'Escolha pelo menos um cômodo.';
   return null;
 }
 
@@ -67,11 +77,11 @@ export function validate(v: TaskFormValues): string | null {
 export function toTask(v: TaskFormValues, existing: Task | undefined, today: IsoDate, newId: () => string): Task {
   const freq = buildFrequency(v);
   const base = {
-    name: v.name.trim(), freq, roomId: v.roomId, personId: v.personId,
+    name: v.name.trim(), freq, roomIds: v.roomIds, personId: v.personId,
     minutes: v.minutes, priority: v.priority, notes: v.notes.trim(),
   };
   if (existing) {
-    const nextDue = sameFrequency(existing.freq, freq) ? existing.nextDue : firstDue(freq, today);
+    const nextDue = sameFrequency(existing.freq, freq, today) ? existing.nextDue : firstDue(freq, today);
     return { ...existing, ...base, nextDue, archived: !nextDue };
   }
   return { id: newId(), ...base, nextDue: firstDue(freq, today), archived: false, streak: 0, history: [] };

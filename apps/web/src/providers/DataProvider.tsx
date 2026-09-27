@@ -11,6 +11,8 @@ interface Data {
   settings: Settings;
   today: IsoDate;
   room(id: string): Room | undefined;
+  /** The task's rooms, in the house's room order. */
+  taskRooms(task: Task): Room[];
   person(id: string | null): Person | undefined;
 }
 
@@ -50,6 +52,7 @@ export function DataProvider({ children, fallback = null }: { children: ReactNod
     return {
       tasks, rooms, people, settings, today,
       room: (id) => rooms.find((r) => r.id === id),
+      taskRooms: (task) => rooms.filter((r) => task.roomIds.includes(r.id)),
       person: (id) => people.find((p) => p.id === id),
     };
   }, [tasks, rooms, people, settings, today]);

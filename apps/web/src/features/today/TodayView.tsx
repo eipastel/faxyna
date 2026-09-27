@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { plural, sumMinutes, todayGroups, type Task } from '@faxyna/core';
+import { minutesLabel, plural, sumMinutes, todayGroups, type Task } from '@faxyna/core';
 import { PageContent, PageHeader } from '@/components/layout/PageHeader';
 import { Card, Eyebrow, Icon, ProgressBar, SectionHeader } from '@/components/ui';
 import { useWeekProgress } from '@/features/progress/useWeekProgress';
@@ -30,7 +30,7 @@ export function TodayView() {
   const subtitle = !tasks.length
     ? 'Tudo pronto para começar.'
     : pending.length
-      ? plural(pending.length, 'tarefa', 'tarefas') + ' para hoje · ~' + sumMinutes(pending) + ' min'
+      ? plural(pending.length, 'tarefa', 'tarefas') + ' para hoje · ~' + minutesLabel(sumMinutes(pending))
       : 'Nada pendente para hoje.';
 
   const groups: Group[] = [
@@ -40,10 +40,10 @@ export function TodayView() {
     { title: 'Mais adiante', dot: 'var(--line-strong)', tasks: g.later },
   ]
     .filter((x) => x.tasks.length)
-    .map((x) => ({ ...x, meta: plural(x.tasks.length, 'tarefa', 'tarefas') + ' · ' + sumMinutes(x.tasks) + ' min' }));
+    .map((x) => ({ ...x, meta: plural(x.tasks.length, 'tarefa', 'tarefas') + ' · ' + minutesLabel(sumMinutes(x.tasks)) }));
 
   if (settings.showDoneToday && g.doneToday.length) {
-    groups.push({ title: 'Feitas hoje', dot: 'var(--green)', tasks: g.doneToday, done: true, meta: g.doneToday.length + ' · ' + sumMinutes(g.doneToday) + ' min' });
+    groups.push({ title: 'Feitas hoje', dot: 'var(--green)', tasks: g.doneToday, done: true, meta: g.doneToday.length + ' · ' + minutesLabel(sumMinutes(g.doneToday)) });
   }
 
   return (

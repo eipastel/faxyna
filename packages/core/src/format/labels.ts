@@ -8,6 +8,10 @@ export const MONTHS_FULL = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', '
 
 export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+/** "Sala", "Sala e Cozinha", "Sala, Cozinha e Quarto". */
+export const joinNames = (names: string[]) =>
+  names.length < 2 ? names.join('') : names.slice(0, -1).join(', ') + ' e ' + names[names.length - 1];
+
 export const plural = (n: number, one: string, many: string) => n + ' ' + (n === 1 ? one : many);
 
 export const fmtShort = (s: IsoDate) => {
@@ -44,9 +48,15 @@ export function relativeDay(s: IsoDate, today: IsoDate): string {
 
 const mondayFirst = (a: number, b: number) => ((a + 6) % 7) - ((b + 6) % 7);
 
+/** "no domingo", "na terça". */
+const onDay = (d: number) => (d === 0 || d === 6 ? 'no ' : 'na ') + DOW_FULL[d];
+
 export function freqLabel(f: Frequency): string {
   if (f.type === 'once') return 'Uma vez';
-  if (f.type === 'interval') return f.every === 1 ? 'Todo dia' : 'A cada ' + f.every + ' dias';
+  if (f.type === 'interval') {
+    const base = f.every === 1 ? 'Todo dia' : 'A cada ' + f.every + ' dias';
+    return f.weekday === undefined ? base : base + ', ' + onDay(f.weekday);
+  }
   const ds = [...f.days].sort(mondayFirst);
   if (!ds.length) return 'Sem dias';
   if (ds.length === 7) return 'Todo dia';
