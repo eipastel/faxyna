@@ -12,8 +12,9 @@ export const byDueThenPriority = (a: Task, b: Task) =>
 
 export const sumMinutes = (tasks: Task[]) => tasks.reduce((s, t) => s + (t.minutes || 0), 0);
 
-const taskMatches = (t: Task, p: PersonFilter) => p === null || t.personId === p;
-const entryMatches = (h: HistoryEntry, p: PersonFilter) => p === null || h.personId === p;
+// Unassigned tasks ("Ninguém fixo") are anyone's, so they show under every person.
+const taskMatches = (t: Task, p: PersonFilter) => p === null || t.personId === p || t.personId === null;
+const entryMatches = (h: HistoryEntry, p: PersonFilter) => p === null || h.personId === p || h.personId === null;
 
 export const activeTasks = (tasks: Task[]) => tasks.filter((t) => !t.archived);
 

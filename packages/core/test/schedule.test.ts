@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   addDays, completeTask, dayOfWeek, minutesLabel, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
   skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
-  buildExampleTasks, DEFAULT_PEOPLE, DEFAULT_ROOMS,
 } from '../src';
 
 // 2024-01-01 is a Monday.
@@ -102,11 +101,11 @@ describe('visões', () => {
     expect(agenda[0].entries).toHaveLength(1); // overdue shows up on today
   });
 
-  it('processa as tarefas de exemplo sem travar', () => {
-    const tasks = buildExampleTasks(MON, DEFAULT_PEOPLE, DEFAULT_ROOMS);
-    expect(todayGroups(tasks, MON, null).today.length).toBeGreaterThan(0);
-    expect(weekAgenda(tasks, MON, MON, null)).toHaveLength(7);
-    expect(weekStats(tasks, MON).pending).toBeGreaterThan(0);
+  it('filtro por pessoa inclui tarefas sem responsável', () => {
+    const mine = task({ id: 'a', personId: 'thiago' });
+    const other = task({ id: 'b', personId: 'julia' });
+    const anyone = task({ id: 'c', personId: null });
+    expect(todayGroups([mine, other, anyone], MON, 'thiago').today.map((t) => t.id)).toEqual(['a', 'c']);
   });
 
   it('dueStatus', () => {

@@ -1,14 +1,12 @@
 'use client';
 
 import { Button, Icon } from '@/components/ui';
-import { useTaskActions } from './useTaskActions';
 import { useTaskSheet } from './TaskSheetProvider';
 import styles from './NoTasksState.module.css';
 
 /** Initial state, before any task exists. */
 export function NoTasksState() {
   const { openNew } = useTaskSheet();
-  const { loadExamples } = useTaskActions();
 
   return (
     <div className={styles.empty}>
@@ -19,7 +17,6 @@ export function NoTasksState() {
       <p className={styles.text}>Cadastre o que precisa ser feito e com que frequência. O app calcula as próximas datas sozinho.</p>
       <div className={styles.actions}>
         <Button variant="primary" size="sm" icon="add" onClick={() => openNew()}>Nova tarefa</Button>
-        <Button variant="outline" size="sm" onClick={loadExamples}>Ver com exemplos</Button>
       </div>
     </div>
   );

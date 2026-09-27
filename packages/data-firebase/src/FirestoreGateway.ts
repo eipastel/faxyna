@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, setDoc, updateDoc, writeBatch, type Firestore } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, setDoc, updateDoc, type Firestore } from 'firebase/firestore';
 import {
   DEFAULT_SETTINGS, type DataGateway, type Person, type ReadRepository, type Room, type Settings,
   type SettingsRepository, type Task, type TaskRepository,
@@ -30,11 +30,6 @@ export class FirestoreGateway implements DataGateway {
       list: async () => (await getDocs(tasks)).docs.map((d) => d.data() as Task),
       subscribe: (listener) => onSnapshot(tasks, (s) => listener(s.docs.map((d) => d.data() as Task))),
       save: (task) => setDoc(doc(tasks, task.id), task),
-      async saveMany(list) {
-        const batch = writeBatch(db);
-        list.forEach((t) => batch.set(doc(tasks, t.id), t));
-        await batch.commit();
-      },
       remove: (id) => deleteDoc(doc(tasks, id)),
     };
     this.rooms = houseField(db, houseId, (h) => h.rooms);

@@ -30,6 +30,18 @@ service cloud.firestore {
         && after.people.diff(before.people).affectedKeys().hasOnly([uid()]);
     }
 
+    // A member may remove only themselves (uid and own person entry), never the last one:
+    // the last member deletes the house instead.
+    function isLeaving() {
+      let before = resource.data;
+      let after = request.resource.data;
+      return uid() in before.memberUids
+        && before.memberUids.size() > 1
+        && after.diff(before).affectedKeys().hasOnly(['memberUids', 'people'])
+        && after.memberUids == before.memberUids.removeAll([uid()])
+        && after.people.diff(before.people).affectedKeys().hasOnly([uid()]);
+    }
+
     match /houses/{houseId} {
       allow read: if isMember(resource.data) || isInvited(resource.data);
 
@@ -39,15 +51,16 @@ service cloud.firestore {
         && request.resource.data.invites == []
         && request.resource.data.people.keys().hasOnly([uid()]);
 
-      // ponytail: members can't remove members yet; add an owner-only path when needed.
-      // Members edit the house but only their own person entry.
+      // Members edit the house but only their own person entry; nobody removes someone else.
       allow update: if (isMember(resource.data)
           && request.resource.data.ownerUid == resource.data.ownerUid
           && request.resource.data.memberUids == resource.data.memberUids
           && request.resource.data.people.diff(resource.data.people).affectedKeys().hasOnly([uid()]))
-        || (isInvited(resource.data) && isJoining());
+        || (isInvited(resource.data) && isJoining())
+        || isLeaving();
 
-      allow delete: if request.auth != null && resource.data.ownerUid == uid();
+      // Only a house's last member can delete it (when moving to another house).
+      allow delete: if isMember(resource.data) && resource.data.memberUids.size() == 1;
 
       match /tasks/{taskId} {
         allow read, write: if isMember(get(/databases/$(database)/documents/houses/$(houseId)).data);

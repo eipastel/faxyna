@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import {
-  buildExampleTasks, completeTask, postponeTask, relativeDay, skipTask, uncompleteTask, type Task,
+  completeTask, postponeTask, relativeDay, skipTask, uncompleteTask, type Task,
 } from '@faxyna/core';
 import { useGateway } from '@/providers/GatewayProvider';
 import { useData } from '@/providers/DataProvider';
@@ -14,7 +14,7 @@ import { useToast } from '@/providers/ToastProvider';
  */
 export function useTaskActions() {
   const gateway = useGateway();
-  const { tasks, today, people, rooms } = useData();
+  const { tasks, today } = useData();
   const { showToast } = useToast();
 
   const run = useCallback(
@@ -79,10 +79,6 @@ export function useTaskActions() {
         if (!prev) return;
         return run(gateway.tasks.remove(id), 'Tarefa excluída.', restore(prev));
       },
-
-      loadExamples() {
-        return run(gateway.tasks.saveMany(buildExampleTasks(today, people, rooms)));
-      },
     };
-  }, [gateway, tasks, today, people, rooms, run]);
+  }, [gateway, tasks, today, run]);
 }
