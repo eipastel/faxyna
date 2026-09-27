@@ -17,7 +17,7 @@ const PRIORITIES: { value: Priority; label: string; dot: string }[] = [
   { value: 'media', label: 'Média', dot: 'var(--text-2)' },
   { value: 'alta', label: 'Alta', dot: 'var(--amber)' },
 ];
-const MINUTES = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300];
+const MINUTES = [1, 5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300];
 
 /** Task create and edit form. */
 export function TaskForm({ task, roomId }: { task?: Task; roomId?: string }) {

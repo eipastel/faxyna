@@ -14,7 +14,6 @@ export interface ReadRepository<T> {
 export interface TaskRepository extends ReadRepository<Task> {
   /** Creates or replaces the task with the same `id`. */
   save(task: Task): Promise<void>;
-  saveMany(tasks: Task[]): Promise<void>;
   remove(id: string): Promise<void>;
 }
 

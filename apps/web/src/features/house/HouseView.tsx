@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { cancelInvite, inviteToHouse } from '@faxyna/data-firebase';
+import { cancelInvite, inviteToHouse, moveToHouse, type House } from '@faxyna/data-firebase';
 import { PageContent, PageHeader } from '@/components/layout/PageHeader';
 import { Avatar, Button, Card, DashedNote, Icon, IconButton, Input, SectionHeader } from '@/components/ui';
 import { firebase } from '@/lib/firebase';
@@ -12,12 +12,13 @@ import styles from './HouseView.module.css';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** House members, pending invites, invite by email and sign out. */
+/** Invites to other houses, members, pending invites, invite by email and sign out. */
 export function HouseView() {
-  const { house, member, signOut } = useSession();
+  const { house, invites, member, signOut } = useSession();
   const { people } = useData();
   const { showToast } = useToast();
   const [email, setEmail] = useState('');
+  const [confirming, setConfirming] = useState<string | null>(null);
   const { db } = firebase();
 
   const save = async (write: Promise<void>, message: string) => {
@@ -37,10 +38,45 @@ export function HouseView() {
     save(inviteToHouse(db, house.id, value), 'Convite enviado. É só a pessoa entrar com esse e-mail.');
   };
 
+  // First tap asks for confirmation, since the current house is left (or deleted).
+  const accept = (to: House) => {
+    if (confirming !== to.id) return setConfirming(to.id);
+    setConfirming(null);
+    save(moveToHouse(db, house, to.id, member), `Você entrou em ${to.name}.`);
+  };
+  const leaveWarning = house.memberUids.length > 1
+    ? `Você sai de ${house.name}.`
+    : `${house.name} e as tarefas dela serão apagadas.`;
+
   return (
     <>
       <PageHeader title="Casa" subtitle={house.name} />
       <PageContent>
+        {invites.length > 0 && (
+          <section className={styles.section}>
+            <SectionHeader title="Convites para você" meta={String(invites.length)} />
+            <Card list>
+              {invites.map((h) => (
+                <div key={h.id} className={styles.row}>
+                  <Icon name="home" size={20} color="var(--blue)" />
+                  <span className={styles.name}>{h.name}</span>
+                  <Button
+                    variant={confirming === h.id ? 'danger' : 'primary'}
+                    size="sm"
+                    confirming={confirming === h.id}
+                    onClick={() => accept(h)}
+                  >
+                    {confirming === h.id ? 'Confirmar' : 'Entrar'}
+                  </Button>
+                </div>
+              ))}
+            </Card>
+            <p className={styles.hint}>
+              {confirming ? leaveWarning : 'Ao entrar em outra casa, você sai desta.'}
+            </p>
+          </section>
+        )}
+
         <section className={styles.section}>
           <SectionHeader title="Moradores" meta={String(people.length)} />
           <Card list>

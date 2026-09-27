@@ -1,7 +1,7 @@
 // Runs against the Firestore emulator: `pnpm test:rules` (needs Java 21+).
 import { readFileSync } from 'node:fs';
 import { assertFails, assertSucceeds, initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { collection, deleteField, doc, getDoc, getDocs, query, setDoc, updateDoc, where, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, collection, deleteDoc, deleteField, doc, getDoc, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { afterAll, beforeEach, describe, it } from 'vitest';
 
 let env: RulesTestEnvironment;
@@ -70,6 +70,29 @@ describe('houses', () => {
     await assertSucceeds(join(as(GUEST), GUEST));
     await assertSucceeds(updateDoc(doc(as(OWNER), 'houses/h1'), { invites: arrayUnion(GUEST.email) }));
     await assertSucceeds(join(as(GUEST), GUEST));
+  });
+
+  it('a member leaves only themselves, never as the last one', async () => {
+    const leave = (u: typeof GUEST) =>
+      updateDoc(doc(as(u), 'houses/h1'), { memberUids: arrayRemove(u.uid), [`people.${u.uid}`]: deleteField() });
+    await assertFails(leave(OWNER));
+    await assertSucceeds(join(as(GUEST), GUEST));
+    await assertFails(updateDoc(doc(as(GUEST), 'houses/h1'), { memberUids: arrayRemove(OWNER.uid), [`people.${OWNER.uid}`]: deleteField() }));
+    await assertSucceeds(leave(OWNER));
+    await assertFails(getDoc(doc(as(OWNER), 'houses/h1')));
+  });
+
+  it('only the last member deletes the house, together with its tasks', async () => {
+    await assertSucceeds(setDoc(doc(as(OWNER), 'houses/h1/tasks/t1'), { name: 'Varrer' }));
+    await assertSucceeds(join(as(GUEST), GUEST));
+    await assertFails(deleteDoc(doc(as(OWNER), 'houses/h1')));
+    await env.withSecurityRulesDisabled((ctx) => updateDoc(doc(ctx.firestore(), 'houses/h1'), { memberUids: [OWNER.uid] }));
+    await assertFails(deleteDoc(doc(as(STRANGER), 'houses/h1')));
+    const db = as(OWNER);
+    const batch = writeBatch(db);
+    batch.delete(doc(db, 'houses/h1/tasks/t1'));
+    batch.delete(doc(db, 'houses/h1'));
+    await assertSucceeds(batch.commit());
   });
 
   it('tasks are members only', async () => {
