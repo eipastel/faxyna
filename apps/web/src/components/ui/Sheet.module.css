@@ -3,6 +3,12 @@
   inset: 0;
   background: rgba(24, 24, 27, 0.32);
   z-index: 20;
+  animation: fade-in var(--dur) var(--ease-out);
+  transition: opacity var(--dur) var(--ease-out);
+}
+.overlay.closing {
+  animation: fade-out var(--dur) var(--ease-out) forwards;
+  pointer-events: none;
 }
 
 .panel {
@@ -12,7 +18,10 @@
   left: 50%;
   /* --vv-* follow the visual viewport (browser bars, iOS keyboard); set by Sheet.tsx. */
   bottom: var(--vv-bottom, 0px);
-  transform: translateX(-50%);
+  /* --drag is set while the sheet is pulled down (Sheet.tsx). */
+  transform: translate(-50%, var(--drag, 0px));
+  transition: transform var(--dur) var(--ease-out);
+  animation: sheet-in var(--dur-slow) var(--ease-out);
   width: 100%;
   max-width: 440px;
   max-height: 92vh;
@@ -27,6 +36,46 @@
   padding: 10px var(--sheet-pad-x) calc(24px + env(safe-area-inset-bottom));
   box-shadow: 0 -10px 40px rgba(24, 24, 27, 0.1);
   outline: none;
+}
+.panel[data-dragging] {
+  transition: none;
+}
+.panel.closing {
+  animation: sheet-out var(--dur) var(--ease-out) forwards;
+  pointer-events: none;
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translate(-50%, 100%);
+  }
+}
+@keyframes sheet-out {
+  to {
+    transform: translate(-50%, 100%);
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+@keyframes modal-out {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
 }
 
 .handle {
@@ -43,11 +92,16 @@
     top: 50%;
     bottom: auto;
     transform: translate(-50%, -50%);
+    animation-name: modal-in;
     width: calc(100% - 48px);
     max-width: 580px;
     max-height: 88vh;
     border-radius: var(--radius-xl);
     padding: 28px;
+  }
+
+  .panel.closing {
+    animation-name: modal-out;
   }
 
   .handle {
