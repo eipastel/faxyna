@@ -1,0 +1,16 @@
+.enter {
+  animation: page-in var(--dur-slow) var(--ease-out) both;
+}
+.forward {
+  --from: 28px;
+}
+.back {
+  --from: -28px;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: var(--from) 0;
+  }
+}

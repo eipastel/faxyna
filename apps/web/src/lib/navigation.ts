@@ -16,7 +16,5 @@ export const NAV_ITEMS: NavItem[] = [
 export const isActive = (pathname: string, href: string) =>
   href === '/' ? pathname === '/' : pathname.replace(/\/$/, '') === href;
 
-const tabIndex = (pathname: string) => NAV_ITEMS.findIndex((item) => isActive(pathname, item.href));
-
-/** View-transition type for a link: slide as if the tabs were laid out left to right. */
-export const navTypes = (pathname: string, href: string) => [tabIndex(href) > tabIndex(pathname) ? 'nav-forward' : 'nav-back'];
+/** Position of the route among the tabs (-1 when it isn't a tab). */
+export const tabIndex = (pathname: string) => NAV_ITEMS.findIndex((item) => isActive(pathname, item.href));

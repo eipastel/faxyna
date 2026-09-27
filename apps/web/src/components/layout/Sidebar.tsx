@@ -6,7 +6,7 @@ import { Button, Eyebrow, Icon, ProgressBar } from '@/components/ui';
 import { useTaskSheet } from '@/features/tasks/TaskSheetProvider';
 import { useWeekProgress } from '@/features/progress/useWeekProgress';
 import { cx } from '@/lib/cx';
-import { isActive, NAV_ITEMS, navTypes } from '@/lib/navigation';
+import { isActive, NAV_ITEMS } from '@/lib/navigation';
 import { useData } from '@/providers/DataProvider';
 import styles from './Sidebar.module.css';
 
@@ -37,7 +37,7 @@ export function Sidebar() {
         {NAV_ITEMS.map((item) => {
           const active = isActive(pathname, item.href);
           return (
-            <Link key={item.href} href={item.href} transitionTypes={navTypes(pathname, item.href)} className={cx(styles.navItem, active && styles.active)} aria-current={active ? 'page' : undefined}>
+            <Link key={item.href} href={item.href} className={cx(styles.navItem, active && styles.active)} aria-current={active ? 'page' : undefined}>
               <Icon name={item.icon} size={21} filled={active} />
               {item.label}
             </Link>

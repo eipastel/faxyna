@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Icon, Toast } from '@/components/ui';
 import { useTaskSheet } from '@/features/tasks/TaskSheetProvider';
 import { cx } from '@/lib/cx';
-import { isActive, NAV_ITEMS, navTypes } from '@/lib/navigation';
+import { isActive, NAV_ITEMS, tabIndex } from '@/lib/navigation';
 import { useToast } from '@/providers/ToastProvider';
 import styles from './BottomDock.module.css';
 
@@ -25,7 +25,7 @@ export function BottomDock() {
     return () => clearTimeout(t);
   }, [toast, shownToast]);
   const undo = current?.undo;
-  const tab = NAV_ITEMS.findIndex((item) => isActive(pathname, item.href));
+  const tab = tabIndex(pathname);
 
   // The FAB shrinks to its icon while scrolling down and comes back on the way up.
   const [compact, setCompact] = useState(false);
@@ -69,7 +69,7 @@ export function BottomDock() {
           {NAV_ITEMS.map((item) => {
             const active = isActive(pathname, item.href);
             return (
-              <Link key={item.href} href={item.href} transitionTypes={navTypes(pathname, item.href)} className={cx(styles.tab, active && styles.active)} aria-current={active ? 'page' : undefined}>
+              <Link key={item.href} href={item.href} className={cx(styles.tab, active && styles.active)} aria-current={active ? 'page' : undefined}>
                 <Icon name={item.icon} size={22} filled={active} />
                 {item.label}
               </Link>

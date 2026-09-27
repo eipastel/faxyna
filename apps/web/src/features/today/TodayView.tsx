@@ -53,7 +53,7 @@ export function TodayView() {
         <NoTasksState />
       ) : (
         <PageContent>
-          <Link href="/progresso" transitionTypes={['nav-forward']} className={styles.weekCard}>
+          <Link href="/progresso" className={styles.weekCard}>
             <Eyebrow>Semana</Eyebrow>
             <ProgressBar value={week.percent} className={styles.weekBar} />
             <span className={styles.weekPct}>{week.percent}%</span>
