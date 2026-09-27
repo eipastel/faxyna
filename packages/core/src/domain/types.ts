@@ -5,7 +5,8 @@ export type Priority = 'alta' | 'media' | 'baixa';
 
 export type Frequency =
   | { type: 'once'; date: IsoDate }
-  | { type: 'interval'; every: number; start: IsoDate }
+  /** `weekday`: each date moves to the nearest one of that day (0 = Sunday), e.g. every 30 days on a Sunday. */
+  | { type: 'interval'; every: number; start: IsoDate; weekday?: number }
   | { type: 'weekdays'; days: number[] }; // 0 = Sunday … 6 = Saturday
 
 export type FrequencyType = Frequency['type'];

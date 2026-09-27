@@ -8,6 +8,8 @@ export interface TaskFormValues {
   freqType: FrequencyType;
   every: number;
   start: IsoDate;
+  /** Every-X-days on the nearest of this weekday; null = any day. */
+  weekday: number | null;
   days: number[];
   date: IsoDate;
   roomIds: string[];
@@ -30,6 +32,7 @@ export function initialValues(task: Task | undefined, d: Defaults): TaskFormValu
     freqType: f?.type ?? 'interval',
     every: f?.type === 'interval' ? f.every : 3,
     start: f?.type === 'interval' ? f.start : d.today,
+    weekday: f?.type === 'interval' ? (f.weekday ?? null) : null,
     days: f?.type === 'weekdays' ? f.days : [dayOfWeek(d.today)],
     date: f?.type === 'once' ? f.date : d.today,
     roomIds: task?.roomIds ?? (d.roomId ? [d.roomId] : []),
@@ -40,9 +43,15 @@ export function initialValues(task: Task | undefined, d: Defaults): TaskFormValu
   };
 }
 
+/** Below a week, pinning the date to a weekday doesn't make sense. */
+export const MIN_EVERY_FOR_WEEKDAY = 7;
+
 export function buildFrequency(v: TaskFormValues): Frequency {
   if (v.freqType === 'once') return { type: 'once', date: v.date };
-  if (v.freqType === 'interval') return { type: 'interval', every: v.every, start: v.start };
+  if (v.freqType === 'interval') {
+    const f: Frequency = { type: 'interval', every: v.every, start: v.start };
+    return v.weekday !== null && v.every >= MIN_EVERY_FOR_WEEKDAY ? { ...f, weekday: v.weekday } : f;
+  }
   return { type: 'weekdays', days: [...v.days] };
 }
 
