@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import {
-  addDays, capitalize, fmtLong, fmtRange, parseIso, DOW, dayOfWeek, sumMinutes, weekAgenda, weekStartOf,
+  addDays, capitalize, fmtLong, fmtRange, minutesLabel, parseIso, DOW, dayOfWeek, sumMinutes, weekAgenda, weekStartOf,
   type AgendaDay, type IsoDate,
 } from '@faxyna/core';
 import { PageContent, PageHeader } from '@/components/layout/PageHeader';
@@ -53,7 +53,7 @@ export function WeekView() {
             <SectionHeader
               size="md"
               title={capitalize(fmtLong(selected))}
-              meta={selectedDay.entries.length ? selectedDay.entries.length + ' · ' + sumMinutes(selectedDay.entries.map((e) => e.task)) + ' min' : ''}
+              meta={selectedDay.entries.length ? selectedDay.entries.length + ' · ' + minutesLabel(sumMinutes(selectedDay.entries.map((e) => e.task))) : ''}
             />
             {selectedDay.entries.length ? (
               // Keyed by day so the rows play their entrance again when the day changes.
