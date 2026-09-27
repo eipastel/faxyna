@@ -3,6 +3,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 export interface ToastState {
+  /** Changes on every show, so a replacing toast animates in again. */
+  id: number;
   message: string;
   undo?: () => void;
   error?: boolean;
@@ -10,7 +12,7 @@ export interface ToastState {
 
 interface ToastApi {
   toast: ToastState | null;
-  showToast(message: string, options?: Omit<ToastState, 'message'>): void;
+  showToast(message: string, options?: Omit<ToastState, 'id' | 'message'>): void;
   dismiss(): void;
 }
 
@@ -26,9 +28,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToast(null);
   }, []);
 
-  const showToast = useCallback((message: string, options?: Omit<ToastState, 'message'>) => {
+  const showToast = useCallback((message: string, options?: Omit<ToastState, 'id' | 'message'>) => {
     clearTimeout(timer.current);
-    setToast({ message, ...options });
+    setToast({ id: Date.now(), message, ...options });
     timer.current = setTimeout(() => setToast(null), DURATION_MS);
   }, []);
 

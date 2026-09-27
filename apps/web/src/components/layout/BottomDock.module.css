@@ -38,12 +38,34 @@
   gap: 6px;
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(37, 99, 235, 0.28);
+  transition:
+    padding var(--dur) var(--ease-out),
+    gap var(--dur) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 .fab:active {
-  transform: scale(0.98);
+  transform: scale(0.94);
+}
+.fabLabel {
+  display: inline-block;
+  max-width: 110px;
+  overflow: hidden;
+  white-space: nowrap;
+  transition:
+    max-width var(--dur) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
+}
+.compact {
+  padding: 0 13px;
+  gap: 0;
+}
+.compact .fabLabel {
+  max-width: 0;
+  opacity: 0;
 }
 
 .tabs {
+  position: relative;
   pointer-events: auto;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -71,4 +93,37 @@
 .active,
 .active:hover {
   color: var(--blue);
+}
+.tab > span:first-child {
+  position: relative; /* above the indicator */
+}
+.active > span:first-child {
+  animation: tab-pop var(--dur-slow) var(--ease-spring);
+}
+
+/* Pill behind the active icon; slides between tabs (--tab = index). */
+.indicator {
+  position: absolute;
+  top: 10px;
+  left: 4px;
+  width: calc((100% - 8px) / 5);
+  height: 30px;
+  transform: translateX(calc(var(--tab) * 100%));
+  transition: transform var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+.indicator::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: 0 auto;
+  width: 56px;
+  border-radius: var(--radius-pill);
+  background: var(--blue-soft);
+}
+
+@keyframes tab-pop {
+  40% {
+    transform: scale(1.18) translateY(-1px);
+  }
 }
