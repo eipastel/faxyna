@@ -1,5 +1,15 @@
 import type { Frequency, IsoDate, Task } from '../domain/types';
-import { addDays, nextWeekday } from './dates';
+import { addDays, nearestWeekday, nextWeekday } from './dates';
+
+type Interval = Extract<Frequency, { type: 'interval' }>;
+
+/** Moves an interval date to its weekday, if it has one, never earlier than `min`. */
+function onWeekday(freq: Interval, d: IsoDate, min: IsoDate): IsoDate {
+  if (freq.weekday === undefined) return d;
+  let s = nearestWeekday(d, freq.weekday);
+  while (s < min) s = addDays(s, 7);
+  return s;
+}
 
 /** First due date of a newly created/changed frequency. */
 export function firstDue(freq: Frequency, today: IsoDate): IsoDate | null {
@@ -7,14 +17,14 @@ export function firstDue(freq: Frequency, today: IsoDate): IsoDate | null {
   if (freq.type === 'interval') {
     let d = freq.start;
     while (d < today) d = addDays(d, freq.every);
-    return d;
+    return onWeekday(freq, d, today);
   }
   return nextWeekday(today, freq.days, true);
 }
 
 /** Next date after `from`, following the frequency (null = does not repeat). */
 export function nextAfter(freq: Frequency, from: IsoDate): IsoDate | null {
-  if (freq.type === 'interval') return addDays(from, freq.every);
+  if (freq.type === 'interval') return onWeekday(freq, addDays(from, freq.every), addDays(from, 1));
   if (freq.type === 'weekdays') return nextWeekday(from, freq.days, false);
   return null;
 }

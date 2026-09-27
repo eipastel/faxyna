@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, completeTask, dayOfWeek, minutesLabel, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
+  addDays, completeTask, dayOfWeek, minutesLabel, nearestWeekday, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
   skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
 } from '../src';
 
@@ -32,6 +32,18 @@ describe('frequência', () => {
     expect(occurrences(task(), MON, addDays(MON, 6))).toEqual([MON, '2024-01-04', '2024-01-07']);
     expect(occurrences(task({ freq: { type: 'weekdays', days: [1, 4] } }), MON, addDays(MON, 6))).toEqual([MON, '2024-01-04']);
     expect(occurrences(task({ archived: true }), MON, addDays(MON, 6))).toEqual([]);
+  });
+
+  it('a cada X dias num dia da semana vai para o mais próximo', () => {
+    const SUN = '2024-01-07';
+    expect([nearestWeekday('2024-02-06', 0), nearestWeekday('2024-02-03', 0), nearestWeekday(SUN, 0)]).toEqual(['2024-02-04', '2024-02-04', SUN]);
+    const freq = { type: 'interval' as const, every: 30, start: SUN, weekday: 0 };
+    // Done on Sunday: +30 is Tuesday 02-06, the nearest Sunday is 02-04 (two days earlier).
+    expect(completeTask(task({ freq, nextDue: SUN }), SUN).nextDue).toBe('2024-02-04');
+    // Created on a Tuesday: the first date is the nearest Sunday that isn't in the past.
+    expect(firstDue({ ...freq, start: '2024-01-09' }, '2024-01-09')).toBe('2024-01-14');
+    expect(freqLabel(freq)).toBe('A cada 30 dias, no domingo');
+    expect(freqLabel({ ...freq, weekday: 2 })).toBe('A cada 30 dias, na terça');
   });
 
   it('freqLabel', () => {

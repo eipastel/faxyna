@@ -28,6 +28,12 @@ export const weekStartOf = (s: IsoDate, weekStartsMonday: boolean): IsoDate => {
 };
 
 /** Next day (starting from `from`) that falls on one of the given weekdays. */
+/** Closest date to `s` falling on `weekday` (up to 3 days before or after). */
+export const nearestWeekday = (s: IsoDate, weekday: number): IsoDate => {
+  const ahead = (weekday - dayOfWeek(s) + 7) % 7;
+  return addDays(s, ahead > 3 ? ahead - 7 : ahead);
+};
+
 export const nextWeekday = (from: IsoDate, days: number[], inclusive: boolean): IsoDate | null => {
   for (let i = inclusive ? 0 : 1; i <= 8; i++) {
     const d = addDays(from, i);

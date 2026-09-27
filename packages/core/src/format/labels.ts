@@ -44,9 +44,15 @@ export function relativeDay(s: IsoDate, today: IsoDate): string {
 
 const mondayFirst = (a: number, b: number) => ((a + 6) % 7) - ((b + 6) % 7);
 
+/** "no domingo", "na terça". */
+const onDay = (d: number) => (d === 0 || d === 6 ? 'no ' : 'na ') + DOW_FULL[d];
+
 export function freqLabel(f: Frequency): string {
   if (f.type === 'once') return 'Uma vez';
-  if (f.type === 'interval') return f.every === 1 ? 'Todo dia' : 'A cada ' + f.every + ' dias';
+  if (f.type === 'interval') {
+    const base = f.every === 1 ? 'Todo dia' : 'A cada ' + f.every + ' dias';
+    return f.weekday === undefined ? base : base + ', ' + onDay(f.weekday);
+  }
   const ds = [...f.days].sort(mondayFirst);
   if (!ds.length) return 'Sem dias';
   if (ds.length === 7) return 'Todo dia';

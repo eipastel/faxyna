@@ -4,7 +4,7 @@ import { addDays, DOW, DOW_FULL, nextWeekday, type FrequencyType } from '@faxyna
 import { Chip, Icon, Segmented } from '@/components/ui';
 import { useData } from '@/providers/DataProvider';
 import { Field } from './Field';
-import { frequencyPreview, type TaskFormValues } from './formValues';
+import { frequencyPreview, MIN_EVERY_FOR_WEEKDAY, type TaskFormValues } from './formValues';
 import styles from './TaskForm.module.css';
 
 const TYPES: { value: FrequencyType; label: string }[] = [
@@ -56,6 +56,19 @@ export function FrequencyField({ values: v, set }: Props) {
               </Chip>
             ))}
           </div>
+          {v.every >= MIN_EVERY_FOR_WEEKDAY && (
+            <div className={`${styles.wrapRow} ${styles.divided}`}>
+              <span className={styles.inlineLabel}>Cair no dia</span>
+              <Chip selected={v.weekday === null} className={styles.dateChip} onClick={() => set({ weekday: null })}>
+                Qualquer
+              </Chip>
+              {dayOrder.map((d) => (
+                <Chip key={d} selected={v.weekday === d} aria-label={DOW_FULL[d]} className={styles.dateChip} onClick={() => set({ weekday: d })}>
+                  {DOW[d].slice(0, 3)}
+                </Chip>
+              ))}
+            </div>
+          )}
           <div className={`${styles.wrapRow} ${styles.divided}`}>
             <span className={styles.inlineLabel}>Começa</span>
             <DateChips value={v.start} onChange={(start) => set({ start })} options={[['Hoje', today], ['Amanhã', tomorrow]]} />
