@@ -6,7 +6,8 @@ export type Priority = 'alta' | 'media' | 'baixa';
 export type Frequency =
   | { type: 'once'; date: IsoDate }
   | { type: 'interval'; every: number; start: IsoDate }
-  | { type: 'weekdays'; days: number[] }; // 0 = Sunday … 6 = Saturday
+  /** `days`: 0 = Sunday … 6 = Saturday. `start`: nothing is due before it (absent on older tasks). */
+  | { type: 'weekdays'; days: number[]; start?: IsoDate };
 
 export type FrequencyType = Frequency['type'];
 

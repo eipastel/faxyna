@@ -9,7 +9,7 @@ export function firstDue(freq: Frequency, today: IsoDate): IsoDate | null {
     while (d < today) d = addDays(d, freq.every);
     return d;
   }
-  return nextWeekday(today, freq.days, true);
+  return nextWeekday(freq.start && freq.start > today ? freq.start : today, freq.days, true);
 }
 
 /** Next date after `from`, following the frequency (null = does not repeat). */
@@ -32,4 +32,14 @@ export function occurrences(task: Task, from: IsoDate, to: IsoDate): IsoDate[] {
   return out;
 }
 
-export const sameFrequency = (a: Frequency, b: Frequency) => JSON.stringify(a) === JSON.stringify(b);
+/**
+ * Same schedule as of `today`. A weekdays `start` already reached changes nothing, so it's
+ * ignored (older tasks have none); keys are sorted since Firestore may return another order.
+ */
+export function sameFrequency(a: Frequency, b: Frequency, today: IsoDate): boolean {
+  const key = (f: Frequency) => {
+    const g = f.type === 'weekdays' && (!f.start || f.start <= today) ? { type: f.type, days: f.days } : f;
+    return JSON.stringify(g, Object.keys(g).sort());
+  };
+  return key(a) === key(b);
+}
