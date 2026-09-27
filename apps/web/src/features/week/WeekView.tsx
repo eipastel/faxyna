@@ -56,9 +56,10 @@ export function WeekView() {
               meta={selectedDay.entries.length ? selectedDay.entries.length + ' · ' + sumMinutes(selectedDay.entries.map((e) => e.task)) + ' min' : ''}
             />
             {selectedDay.entries.length ? (
-              <Card list>
+              // Keyed by day so the rows play their entrance again when the day changes.
+              <Card list key={selected}>
                 {selectedDay.entries.map((e, i) => (
-                  <TaskRow key={e.task.id + i} variant="agenda" {...e} />
+                  <TaskRow key={e.task.id + i} variant="agenda" index={i} {...e} />
                 ))}
               </Card>
             ) : (

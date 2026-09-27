@@ -53,7 +53,7 @@ export function TodayView() {
         <NoTasksState />
       ) : (
         <PageContent>
-          <Link href="/progresso" className={styles.weekCard}>
+          <Link href="/progresso" transitionTypes={['nav-forward']} className={styles.weekCard}>
             <Eyebrow>Semana</Eyebrow>
             <ProgressBar value={week.percent} className={styles.weekBar} />
             <span className={styles.weekPct}>{week.percent}%</span>
@@ -74,8 +74,8 @@ export function TodayView() {
             <section key={group.title} className={styles.group}>
               <SectionHeader title={group.title} dot={group.dot} meta={group.meta} />
               <Card list>
-                {group.tasks.map((t) => (
-                  <TaskRow key={t.id} task={t} done={group.done} />
+                {group.tasks.map((t, i) => (
+                  <TaskRow key={t.id} task={t} done={group.done} index={i} />
                 ))}
               </Card>
             </section>

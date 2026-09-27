@@ -1,4 +1,5 @@
 .track {
+  position: relative;
   gap: 2px;
   padding: 3px;
   border-radius: var(--radius-pill);
@@ -7,17 +8,36 @@
 }
 
 .option {
+  position: relative; /* above the thumb */
   border-radius: var(--radius-pill);
   border: none;
   background: transparent;
   color: var(--text-2);
+  transition: color var(--dur) var(--ease-out);
   cursor: pointer;
   white-space: nowrap;
 }
 
 .selected {
-  background: var(--blue);
   color: #ffffff;
+}
+
+/* Blue pill behind the selected option; Segmented.tsx sets its width and offset. */
+.thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  border-radius: var(--radius-pill);
+  background: var(--blue);
+}
+.animate {
+  transition:
+    transform var(--dur) var(--ease-out),
+    width var(--dur) var(--ease-out);
+}
+.hidden {
+  visibility: hidden;
 }
 
 .sm {
