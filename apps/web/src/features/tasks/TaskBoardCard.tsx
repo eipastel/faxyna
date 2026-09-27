@@ -1,5 +1,6 @@
 'use client';
 
+import { joinNames } from '@faxyna/core';
 import { Dot } from '@/components/ui';
 import { cx } from '@/lib/cx';
 import { roomColors } from '@/lib/roomColors';
@@ -10,9 +11,10 @@ import styles from './TaskBoardCard.module.css';
 
 /** Compact card for the weekly board (desktop). */
 export function TaskBoardCard({ task, done, projected }: TaskOccurrence) {
-  const { room, person } = useData();
+  const { taskRooms, person } = useData();
   const { openDetail } = useTaskSheet();
-  const r = room(task.roomId);
+  const rooms = taskRooms(task);
+  const r = rooms[0];
   const who = person(task.personId);
 
   return (
@@ -24,7 +26,7 @@ export function TaskBoardCard({ task, done, projected }: TaskOccurrence) {
       <span className={styles.name}>{task.name}</span>
       <span className={styles.meta}>
         {r && <Dot color={roomColors(r.hue).dot} />}
-        <span className={styles.room}>{r?.name}</span>
+        <span className={styles.room}>{joinNames(rooms.map((x) => x.name))}</span>
         <span>{who ? who.name[0] : '–'}</span>
       </span>
     </button>

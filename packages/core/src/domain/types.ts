@@ -19,7 +19,8 @@ export type HistoryEntry =
 export interface Task {
   id: string;
   name: string;
-  roomId: string;
+  /** One or more rooms done together (e.g. an open-plan living room and kitchen). */
+  roomIds: string[];
   personId: string | null;
   minutes: number;
   priority: Priority;

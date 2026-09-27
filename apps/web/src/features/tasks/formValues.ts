@@ -10,7 +10,7 @@ export interface TaskFormValues {
   start: IsoDate;
   days: number[];
   date: IsoDate;
-  roomId: string;
+  roomIds: string[];
   personId: string | null;
   minutes: number;
   priority: Priority;
@@ -32,7 +32,7 @@ export function initialValues(task: Task | undefined, d: Defaults): TaskFormValu
     start: f?.type === 'interval' ? f.start : d.today,
     days: f?.type === 'weekdays' ? f.days : [dayOfWeek(d.today)],
     date: f?.type === 'once' ? f.date : d.today,
-    roomId: task?.roomId ?? d.roomId,
+    roomIds: task?.roomIds ?? (d.roomId ? [d.roomId] : []),
     personId: task ? task.personId : d.personId,
     minutes: task?.minutes ?? 15,
     priority: task?.priority ?? 'media',
@@ -60,6 +60,7 @@ export const newTaskId = () => 't' + Date.now().toString(36) + Math.random().toS
 export function validate(v: TaskFormValues): string | null {
   if (!v.name.trim()) return 'Dê um nome para a tarefa.';
   if (v.freqType === 'weekdays' && !v.days.length) return 'Escolha pelo menos um dia da semana.';
+  if (!v.roomIds.length) return 'Escolha pelo menos um cômodo.';
   return null;
 }
 
@@ -67,7 +68,7 @@ export function validate(v: TaskFormValues): string | null {
 export function toTask(v: TaskFormValues, existing: Task | undefined, today: IsoDate, newId: () => string): Task {
   const freq = buildFrequency(v);
   const base = {
-    name: v.name.trim(), freq, roomId: v.roomId, personId: v.personId,
+    name: v.name.trim(), freq, roomIds: v.roomIds, personId: v.personId,
     minutes: v.minutes, priority: v.priority, notes: v.notes.trim(),
   };
   if (existing) {

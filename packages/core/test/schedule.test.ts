@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, completeTask, dayOfWeek, minutesLabel, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
+  addDays, completeTask, dayOfWeek, joinNames, minutesLabel, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
   skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
 } from '../src';
 
@@ -8,7 +8,7 @@ import {
 const MON = '2024-01-01';
 
 const task = (over: Partial<Task> = {}): Task => ({
-  id: 't', name: 'Varrer', roomId: 'sala', personId: 'thiago', minutes: 10, priority: 'media', notes: '',
+  id: 't', name: 'Varrer', roomIds: ['sala'], personId: 'thiago', minutes: 10, priority: 'media', notes: '',
   freq: { type: 'interval', every: 3, start: MON }, nextDue: MON, archived: false, streak: 0, history: [], ...over,
 });
 
@@ -59,6 +59,7 @@ describe('ações', () => {
 
   it('rótulo de tempo', () => {
     expect([30, 60, 90, 125].map(minutesLabel)).toEqual(['30 min', '1h', '1h30', '2h05']);
+    expect([[], ['Sala'], ['Sala', 'Cozinha'], ['Sala', 'Cozinha', 'Quarto']].map(joinNames)).toEqual(['', 'Sala', 'Sala e Cozinha', 'Sala, Cozinha e Quarto']);
   });
 
   it('concluir atrasada zera streak; "uma vez" encerra', () => {
