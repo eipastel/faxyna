@@ -59,21 +59,28 @@ a,
     color var(--dur-fast) var(--ease-out);
 }
 
-button:not(:disabled):active,
-a:active {
-  transform: scale(0.97);
+/* :where keeps this at zero specificity so component rules can override it.
+   Pressing applies at once (iOS shows :active only briefly); releasing eases back. */
+:where(button:not(:disabled), a):active {
+  transform: scale(0.95);
+  transition-duration: 0s;
 }
 
 /* Shared entrance for list items; set --i inline for the stagger. */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(16px);
   }
 }
 
 .rise {
-  animation: rise var(--dur-slow) var(--ease-out) both;
+  animation: rise var(--dur-enter) var(--ease-enter) both;
   animation-delay: calc(min(var(--i, 0), 8) * var(--stagger));
 }
 
+
+/* Hold entrances until the splash lifts (Splash.tsx sets data-ready), or they finish unseen. */
+html:not([data-ready]) .rise {
+  animation-play-state: paused;
+}

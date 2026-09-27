@@ -110,7 +110,9 @@ export function Sheet({ open, onClose, label, children }: SheetProps) {
       dy = e.touches[0].clientY - startY;
       if (!dragging) {
         if (dy < 0) tracking = false;
-        if (!tracking || dy < 6) return;
+        if (!tracking) return;
+        if (dy > 0) e.preventDefault(); // before iOS starts its own bounce
+        if (dy < 6) return;
         if (Math.abs(e.touches[0].clientX - startX) > dy) return void (tracking = false); // sideways scroll
         dragging = true;
         el.dataset.dragging = '';

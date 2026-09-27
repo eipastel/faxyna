@@ -30,12 +30,12 @@
 
 /* The app eases in as the splash fades out (Splash.tsx sets data-ready). */
 :global(html[data-ready]) .main {
-  animation: shell-in var(--dur-slow) var(--ease-out);
+  animation: shell-in var(--dur-enter) var(--ease-enter) 150ms both;
 }
 
 @keyframes shell-in {
   from {
     opacity: 0;
-    transform: scale(0.985);
+    transform: scale(0.96);
   }
 }

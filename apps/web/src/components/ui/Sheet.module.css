@@ -28,7 +28,7 @@
   max-height: calc(var(--vv-height, 100dvh) - 24px);
   overflow-y: auto;
   overflow-x: hidden;
-  overscroll-behavior: contain;
+  overscroll-behavior: none; /* no iOS bounce fighting the drag-to-dismiss */
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 18px 18px 0 0;
