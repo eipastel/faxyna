@@ -87,6 +87,13 @@ describe('ações', () => {
 
   it('concluir atrasada zera streak; "uma vez" encerra', () => {
     expect(completeTask(task({ nextDue: '2023-12-30', streak: 4 }), MON).streak).toBe(0);
+    // Late completion keeps today's occurrence due; interval off today still counts from today.
+    const daily = task({ freq: { type: 'interval', every: 1, start: MON }, nextDue: '2023-12-31' });
+    const caught = completeTask(daily, MON);
+    expect(caught.nextDue).toBe(MON);
+    expect(completeTask(caught, MON)).toMatchObject({ nextDue: '2024-01-02', streak: 1 });
+    expect(completeTask(task({ freq: { type: 'weekdays', days: [1, 3] }, nextDue: '2023-12-27' }), MON).nextDue).toBe(MON);
+    expect(completeTask(task({ nextDue: '2023-12-30' }), MON).nextDue).toBe('2024-01-04');
     const once = completeTask(task({ freq: { type: 'once', date: MON } }), MON);
     expect(once.nextDue).toBeNull();
     expect(once.archived).toBe(true);
