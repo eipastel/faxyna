@@ -2,14 +2,23 @@ import type { IsoDate, Task } from '../domain/types';
 import { addDays } from './dates';
 import { nextAfter } from './frequency';
 
+/** Whether the schedule, walked on from `from`, has an occurrence exactly on `day`. */
+function fallsOn(freq: Task['freq'], from: IsoDate, day: IsoDate): boolean {
+  let d = nextAfter(freq, from);
+  while (d && d < day) d = nextAfter(freq, d);
+  return d === day;
+}
+
 /**
  * Recurrence counts from the day the task was completed, but always moves past
  * the occurrence being completed (early completions would otherwise land on it again).
+ * A late completion closes the missed occurrences only: if one is also due today, it stays due.
  */
 export function completeTask(task: Task, today: IsoDate): Task {
   const onTime = !!task.nextDue && task.nextDue >= today;
   let next = nextAfter(task.freq, today);
   if (next && task.nextDue && next <= task.nextDue) next = nextAfter(task.freq, task.nextDue);
+  if (next && !onTime && task.nextDue && fallsOn(task.freq, task.nextDue, today)) next = today;
   return {
     ...task,
     nextDue: next,
