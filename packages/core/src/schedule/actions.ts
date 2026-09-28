@@ -13,19 +13,20 @@ function fallsOn(freq: Task['freq'], from: IsoDate, day: IsoDate): boolean {
  * Recurrence counts from the day the task was completed, but always moves past
  * the occurrence being completed (early completions would otherwise land on it again).
  * A late completion closes the missed occurrences only: if one is also due today, it stays due.
+ * `doneOn` records a completion made on an earlier day (forgot to mark it); on time if it was the due day.
  */
-export function completeTask(task: Task, today: IsoDate): Task {
-  const onTime = !!task.nextDue && task.nextDue >= today;
-  let next = nextAfter(task.freq, today);
+export function completeTask(task: Task, today: IsoDate, doneOn: IsoDate = today): Task {
+  const onTime = !!task.nextDue && task.nextDue >= doneOn;
+  let next = nextAfter(task.freq, doneOn);
   if (next && task.nextDue && next <= task.nextDue) next = nextAfter(task.freq, task.nextDue);
-  if (next && !onTime && task.nextDue && fallsOn(task.freq, task.nextDue, today)) next = today;
+  if (next && next > today && task.nextDue && task.nextDue < today && fallsOn(task.freq, task.nextDue, today)) next = today;
   return {
     ...task,
     nextDue: next,
     archived: !next,
     streak: onTime ? task.streak + 1 : 0,
     history: [
-      { date: today, type: 'done', personId: task.personId, onTime, prevDue: task.nextDue ?? undefined, prevStreak: task.streak },
+      { date: doneOn, type: 'done', personId: task.personId, onTime, prevDue: task.nextDue ?? undefined, prevStreak: task.streak },
       ...task.history,
     ],
   };

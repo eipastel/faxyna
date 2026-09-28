@@ -72,6 +72,16 @@
   flex-direction: column;
   gap: 8px;
 }
+.twoCols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.otherDay {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
 .threeCols {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

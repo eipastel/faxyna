@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import {
-  completeTask, postponeTask, relativeDay, skipTask, uncompleteTask, type Task,
+  completeTask, postponeTask, relativeDay, skipTask, uncompleteTask, type IsoDate, type Task,
 } from '@faxyna/core';
 import { useGateway } from '@/providers/GatewayProvider';
 import { useData } from '@/providers/DataProvider';
@@ -35,11 +35,12 @@ export function useTaskActions() {
     const next = (t: Task) => (t.nextDue ? relativeDay(t.nextDue, today) : '');
 
     return {
-      complete(id: string) {
+      /** `doneOn`: the day it was actually done, when marked later (default today). */
+      complete(id: string, doneOn: IsoDate = today) {
         const prev = find(id);
         if (!prev?.nextDue) return;
-        const t = completeTask(prev, today);
-        const onTime = prev.nextDue >= today;
+        const t = completeTask(prev, today, doneOn);
+        const onTime = prev.nextDue >= doneOn;
         const msg = (onTime ? 'Feito. ' : 'Feito, mesmo atrasado. ') + (t.nextDue ? 'Próxima ' + next(t) + '.' : 'Tarefa encerrada.');
         return run(gateway.tasks.save(t), msg, restore(prev));
       },

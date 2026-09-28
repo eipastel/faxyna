@@ -94,6 +94,19 @@ describe('ações', () => {
     expect(completeTask(caught, MON)).toMatchObject({ nextDue: '2024-01-02', streak: 1 });
     expect(completeTask(task({ freq: { type: 'weekdays', days: [1, 3] }, nextDue: '2023-12-27' }), MON).nextDue).toBe(MON);
     expect(completeTask(task({ nextDue: '2023-12-30' }), MON).nextDue).toBe('2024-01-04');
+  });
+
+  it('concluir num dia anterior (esqueceu de marcar)', () => {
+    const daily = task({ freq: { type: 'interval', every: 1, start: MON }, nextDue: '2023-12-31', streak: 2 });
+    const onDay = completeTask(daily, MON, '2023-12-31');
+    expect(onDay).toMatchObject({ nextDue: MON, streak: 3 });
+    expect(onDay.history[0]).toMatchObject({ date: '2023-12-31', onTime: true });
+    expect(uncompleteTask(onDay)).toEqual(daily);
+    // Later than due but before today: late, and today's occurrence stays due.
+    const late = completeTask(task({ freq: { type: 'interval', every: 1, start: MON }, nextDue: '2023-12-30' }), MON, '2023-12-31');
+    expect(late).toMatchObject({ nextDue: MON, streak: 0 });
+    // Interval counts from the day it was done.
+    expect(completeTask(task({ nextDue: '2023-12-30' }), MON, '2023-12-30').nextDue).toBe('2024-01-02');
     const once = completeTask(task({ freq: { type: 'once', date: MON } }), MON);
     expect(once.nextDue).toBeNull();
     expect(once.archived).toBe(true);
