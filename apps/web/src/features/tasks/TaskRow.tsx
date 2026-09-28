@@ -43,7 +43,9 @@ export function TaskRow({ task, due, done, projected, variant = 'today', index, 
   // Only the latest completion can be undone; older ones (Week view) just open the details.
   const last = lastCompletion(task);
   const undoable = done && !!last && (!due || due === last.date);
-  const toggle = () => (undoable ? uncomplete(task.id) : done || projected ? open() : complete(task.id));
+  // Overdue: the details ask which day it was actually done.
+  const overdue = !done && !!task.nextDue && task.nextDue < today;
+  const toggle = () => (undoable ? uncomplete(task.id) : done || projected || overdue ? open() : complete(task.id));
   const canToggle = undoable || !(done || projected);
 
   const [leaving, setLeaving] = useState(false);

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { capitalize, fmtLong, fmtShort, freqLabel, historyLabel, joinNames, lastCompletion, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
-import { Button, Card, Dot, Eyebrow, Icon, IconButton } from '@/components/ui';
+import { addDays, capitalize, fmtLong, fmtShort, freqLabel, historyLabel, joinNames, lastCompletion, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
+import { Button, Card, Dot, Eyebrow, Icon, IconButton, Input } from '@/components/ui';
 import { roomColors } from '@/lib/roomColors';
 import { useData } from '@/providers/DataProvider';
 import { useTaskActions } from './useTaskActions';
@@ -21,6 +21,8 @@ export function TaskDetail({ task }: { task: Task }) {
   const r = rooms[0];
   const who = person(task.personId);
   const doneToday = lastCompletion(task)?.date === today;
+  const overdue = !!task.nextDue && task.nextDue < today;
+  const [otherDay, setOtherDay] = useState('');
 
   const act = (fn: () => void) => () => {
     fn();
@@ -80,10 +82,34 @@ export function TaskDetail({ task }: { task: Task }) {
 
       {task.nextDue && (
         <div className={styles.actions}>
-          {!doneToday && (
+          {!doneToday && !overdue && (
             <Button variant="primary" size="xxl" icon="check" iconSize={20} onClick={act(() => actions.complete(task.id))}>
               Marcar como feita
             </Button>
+          )}
+          {!doneToday && overdue && (
+            <>
+              <Eyebrow>Quando foi feita?</Eyebrow>
+              <div className={styles.twoCols}>
+                <Button variant="primary" size="xxl" onClick={act(() => actions.complete(task.id, task.nextDue!))}>
+                  No dia · {fmtShort(task.nextDue)}
+                </Button>
+                <Button variant="primary" size="xxl" onClick={act(() => actions.complete(task.id))}>Hoje</Button>
+              </div>
+              {task.nextDue < addDays(today, -1) && (
+                <div className={styles.otherDay}>
+                  <Input
+                    type="date"
+                    aria-label="Outro dia"
+                    min={task.nextDue}
+                    max={today}
+                    value={otherDay}
+                    onChange={(e) => setOtherDay(e.target.value)}
+                  />
+                  <Button disabled={!otherDay} onClick={act(() => actions.complete(task.id, otherDay))}>Outro dia</Button>
+                </div>
+              )}
+            </>
           )}
           <div className={styles.threeCols}>
             <Button onClick={act(() => actions.postpone(task.id, 1))}>Adiar 1 dia</Button>
