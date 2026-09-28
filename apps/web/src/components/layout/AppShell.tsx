@@ -9,6 +9,7 @@ import { PersonFilterProvider } from '@/providers/PersonFilterProvider';
 import { ToastProvider } from '@/providers/ToastProvider';
 import { BottomDock } from './BottomDock';
 import { SplashDismiss } from './Splash';
+import { UpdateWatcher } from './UpdateWatcher';
 import { Sidebar } from './Sidebar';
 import styles from './AppShell.module.css';
 
@@ -20,9 +21,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <SessionProvider>
-      <DataProvider>
-        <ToastProvider>
+    // Toasts and the update check sit above the session so sign-in and setup get updates too.
+    <ToastProvider>
+      <UpdateWatcher />
+      <SessionProvider>
+        <DataProvider>
           <PersonFilterProvider>
             <TaskSheetProvider>
               <SplashDismiss />
@@ -34,8 +37,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               <InstallCard />
             </TaskSheetProvider>
           </PersonFilterProvider>
-        </ToastProvider>
-      </DataProvider>
-    </SessionProvider>
+        </DataProvider>
+      </SessionProvider>
+    </ToastProvider>
   );
 }

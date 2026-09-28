@@ -8,7 +8,7 @@ import styles from './Toast.module.css';
 
 interface ToastProps {
   message: string;
-  onUndo?: () => void;
+  action?: { label: string; run(): void };
   error?: boolean;
   /** Plays the exit animation (the parent unmounts it afterwards). */
   leaving?: boolean;
@@ -16,7 +16,7 @@ interface ToastProps {
   onDismiss?: () => void;
 }
 
-export function Toast({ message, onUndo, error, leaving, onDismiss }: ToastProps) {
+export function Toast({ message, action, error, leaving, onDismiss }: ToastProps) {
   const swipe = useSwipe({ dirs: ['left', 'right'], commit: 0.3, onCommit: () => onDismiss?.() });
   const style = { '--x': swipe.x + 'px', opacity: 1 - Math.abs(swipe.x) / 240 } as CSSProperties;
 
@@ -29,9 +29,9 @@ export function Toast({ message, onUndo, error, leaving, onDismiss }: ToastProps
     >
       <Icon name={error ? 'error' : 'check_circle'} size={18} filled color={error ? '#f87171' : '#4ade80'} />
       <span className={styles.message}>{message}</span>
-      {onUndo && (
-        <button type="button" className={styles.undo} onClick={onUndo}>
-          Desfazer
+      {action && (
+        <button type="button" className={styles.action} onClick={action.run}>
+          {action.label}
         </button>
       )}
     </div>
