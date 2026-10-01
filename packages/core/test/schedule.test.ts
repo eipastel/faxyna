@@ -125,6 +125,9 @@ describe('ações', () => {
     const t = missTask(daily, MON);
     expect(t).toMatchObject({ nextDue: MON, streak: 0 });
     expect(t.history[0]).toEqual({ date: '2023-12-31', type: 'missed', personId: 'thiago' });
+    // Shows on the Week view on the day it was due.
+    const day = weekAgenda([t], addDays(MON, -1), MON, null)[0];
+    expect(day.entries).toContainEqual(expect.objectContaining({ due: '2023-12-31', missed: true, done: false }));
     // Counts against the week it was due.
     expect(weekStats([missTask(task({ nextDue: '2024-01-02' }), '2024-01-03')], MON).pending).toBe(1 + 1); // missed + 01-06
   });
