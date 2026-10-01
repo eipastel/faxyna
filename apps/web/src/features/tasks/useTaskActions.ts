@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import {
-  completeTask, missTask, postponeTask, relativeDay, skipTask, uncompleteTask, type IsoDate, type Task,
+  completeTask, lastMiss, missTask, postponeTask, relativeDay, skipTask, uncompleteTask, unmissTask, type IsoDate, type Task,
 } from '@faxyna/core';
 import { useGateway } from '@/providers/GatewayProvider';
 import { useData } from '@/providers/DataProvider';
@@ -43,6 +43,15 @@ export function useTaskActions() {
         const onTime = prev.nextDue >= doneOn;
         const msg = (onTime ? 'Feito. ' : 'Feito, mesmo atrasado. ') + (t.nextDue ? 'Próxima ' + next(t) + '.' : 'Tarefa encerrada.');
         return run(gateway.tasks.save(t), msg, restore(prev));
+      },
+
+      /** Replaces the latest "not done" mark with a completion on that day. */
+      completeMissed(id: string) {
+        const prev = find(id);
+        const miss = prev && lastMiss(prev);
+        if (!miss) return;
+        const t = completeTask(unmissTask(prev), today, miss.date);
+        return run(gateway.tasks.save(t), 'Feito. ' + (t.nextDue ? 'Próxima ' + next(t) + '.' : 'Tarefa encerrada.'), restore(prev));
       },
 
       uncomplete(id: string) {
