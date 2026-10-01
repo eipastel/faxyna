@@ -11,7 +11,7 @@ import styles from './TaskDetail.module.css';
 
 const TONE_COLOR = { neutral: 'var(--text-2)', today: 'var(--blue-ink)', overdue: 'var(--red)', done: 'var(--green)', late: 'var(--amber)' };
 
-/** Task details: complete, postpone, skip, edit, delete and latest entries. */
+/** Task details: complete, mark as not done, postpone, skip, edit, delete and latest entries. */
 export function TaskDetail({ task }: { task: Task }) {
   const { today, taskRooms, person } = useData();
   const actions = useTaskActions();
@@ -109,6 +109,7 @@ export function TaskDetail({ task }: { task: Task }) {
                   <Button disabled={!otherDay} onClick={act(() => actions.complete(task.id, otherDay))}>Outro dia</Button>
                 </div>
               )}
+              <Button icon="close" iconSize={18} onClick={act(() => actions.miss(task.id))}>Não foi feita</Button>
             </>
           )}
           <div className={styles.threeCols}>

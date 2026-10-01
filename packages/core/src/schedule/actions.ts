@@ -51,14 +51,36 @@ export function uncompleteTask(task: Task): Task {
   };
 }
 
-export function skipTask(task: Task, today: IsoDate): Task {
+/**
+ * Next due date once the current occurrence is closed without being done.
+ * Overdue: closes the missed occurrences only; if one is also due today, it stays due.
+ */
+function afterClosing(task: Task, today: IsoDate): IsoDate | null {
+  if (task.nextDue && task.nextDue < today && fallsOn(task.freq, task.nextDue, today)) return today;
   const base = task.nextDue && task.nextDue > today ? task.nextDue : today;
-  const next = task.freq.type === 'interval' ? nextAfter(task.freq, today) : nextAfter(task.freq, base);
+  return task.freq.type === 'interval' ? nextAfter(task.freq, today) : nextAfter(task.freq, base);
+}
+
+/** Not needed this time: the streak is kept. */
+export function skipTask(task: Task, today: IsoDate): Task {
+  const next = afterClosing(task, today);
   return {
     ...task,
     nextDue: next,
     archived: !next,
     history: [{ date: today, type: 'skip', personId: task.personId }, ...task.history],
+  };
+}
+
+/** Should have been done and wasn't: breaks the streak; recorded on the day it was due. */
+export function missTask(task: Task, today: IsoDate): Task {
+  const next = afterClosing(task, today);
+  return {
+    ...task,
+    nextDue: next,
+    archived: !next,
+    streak: 0,
+    history: [{ date: task.nextDue ?? today, type: 'missed', personId: task.personId }, ...task.history],
   };
 }
 

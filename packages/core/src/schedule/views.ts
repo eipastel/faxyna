@@ -92,6 +92,8 @@ export function weekStats(tasks: Task[], weekStart: IsoDate, person: PersonFilte
         s.done++;
         s.minutes += t.minutes || 0;
       }
+      // ponytail: missed occurrences count as pending, so the week's % reflects them.
+      if (h.type === 'missed' && h.date >= weekStart && h.date <= weekEnd) s.pending++;
     });
     if (!t.archived && t.nextDue) {
       s.pending += occurrences(t, weekStart, weekEnd).length;

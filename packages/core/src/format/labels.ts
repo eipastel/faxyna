@@ -90,6 +90,7 @@ export const DONE_STATUS: StatusLabel = { label: 'Feita', tone: 'done' };
 export function historyLabel(h: HistoryEntry): StatusLabel {
   if (h.type === 'done') return h.onTime ? { label: 'No prazo', tone: 'done' } : { label: 'Com atraso', tone: 'late' };
   if (h.type === 'skip') return { label: 'Pulada', tone: 'neutral' };
+  if (h.type === 'missed') return { label: 'Não feita', tone: 'overdue' };
   return { label: 'Adiada +' + h.days + 'd', tone: 'neutral' };
 }
 
