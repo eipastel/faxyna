@@ -101,7 +101,12 @@
     opacity var(--dur-fast) var(--ease-out),
     transform var(--dur) var(--ease-spring);
 }
-.checkDone .checkIcon {
+.checkMissed {
+  border-color: var(--red);
+  background: var(--red);
+}
+.checkDone .checkIcon,
+.checkMissed .checkIcon {
   opacity: 1;
   transform: none;
 }

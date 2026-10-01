@@ -43,6 +43,7 @@ export interface AgendaEntry {
   due?: IsoDate;
   projected: boolean;
   done: boolean;
+  missed?: boolean;
 }
 
 export interface AgendaDay {
@@ -50,7 +51,7 @@ export interface AgendaDay {
   entries: AgendaEntry[];
 }
 
-/** 7 days from `weekStart`: scheduled occurrences, overdue ones (on today) and completions. */
+/** 7 days from `weekStart`: scheduled occurrences, overdue ones (on today), completions and missed ones. */
 export function weekAgenda(tasks: Task[], weekStart: IsoDate, today: IsoDate, person: PersonFilter): AgendaDay[] {
   const weekEnd = addDays(weekStart, 6);
   const map = new Map<IsoDate, AgendaEntry[]>();
@@ -67,13 +68,14 @@ export function weekAgenda(tasks: Task[], weekStart: IsoDate, today: IsoDate, pe
 
   tasks.forEach((t) =>
     t.history.forEach((h) => {
-      if (h.type === 'done' && entryMatches(h, person)) map.get(h.date)?.push({ task: t, due: h.date, projected: false, done: true });
+      if ((h.type === 'done' || h.type === 'missed') && entryMatches(h, person))
+        map.get(h.date)?.push({ task: t, due: h.date, projected: false, done: h.type === 'done', missed: h.type === 'missed' });
     }),
   );
 
   return [...map].map(([date, entries]) => ({
     date,
-    entries: entries.sort((a, b) => Number(a.done) - Number(b.done)),
+    entries: entries.sort((a, b) => Number(a.done || !!a.missed) - Number(b.done || !!b.missed)),
   }));
 }
 
@@ -92,6 +94,8 @@ export function weekStats(tasks: Task[], weekStart: IsoDate, person: PersonFilte
         s.done++;
         s.minutes += t.minutes || 0;
       }
+      // ponytail: missed occurrences count as pending, so the week's % reflects them.
+      if (h.type === 'missed' && h.date >= weekStart && h.date <= weekEnd) s.pending++;
     });
     if (!t.archived && t.nextDue) {
       s.pending += occurrences(t, weekStart, weekEnd).length;

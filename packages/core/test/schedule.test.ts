@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addDays, completeTask, dayOfWeek, joinNames, minutesLabel, nearestWeekday, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
   sameFrequency,
-  skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
+  missTask, skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
 } from '../src';
 
 // 2024-01-01 is a Monday.
@@ -120,8 +120,25 @@ describe('ações', () => {
     expect(uncompleteTask(before)).toBe(before);
   });
 
+  it('não feita fecha a ocorrência e zera a sequência', () => {
+    const daily = task({ freq: { type: 'weekdays', days: [0, 1, 2, 3, 4, 5, 6] }, nextDue: '2023-12-31', streak: 3 });
+    const t = missTask(daily, MON);
+    expect(t).toMatchObject({ nextDue: MON, streak: 0 });
+    expect(t.history[0]).toEqual({ date: '2023-12-31', type: 'missed', personId: 'thiago' });
+    // Shows on the Week view on the day it was due.
+    const day = weekAgenda([t], addDays(MON, -1), MON, null)[0];
+    expect(day.entries).toContainEqual(expect.objectContaining({ due: '2023-12-31', missed: true, done: false }));
+    // Counts against the week it was due.
+    expect(weekStats([missTask(task({ nextDue: '2024-01-02' }), '2024-01-03')], MON).pending).toBe(1 + 1); // missed + 01-06
+  });
+
   it('pular e adiar', () => {
     expect(skipTask(task({ freq: { type: 'weekdays', days: [1] }, nextDue: '2024-01-08' }), MON).nextDue).toBe('2024-01-15');
+    // Skipping an overdue occurrence keeps today's due (daily task, yesterday missed).
+    const daily = task({ freq: { type: 'weekdays', days: [0, 1, 2, 3, 4, 5, 6] }, nextDue: '2023-12-31', streak: 3 });
+    expect(skipTask(daily, MON)).toMatchObject({ nextDue: MON, streak: 3 });
+    // Overdue with nothing due today: moves on from today as before.
+    expect(skipTask(task({ freq: { type: 'weekdays', days: [3] }, nextDue: '2023-12-27' }), MON).nextDue).toBe('2024-01-03');
     expect(postponeTask(task({ nextDue: '2023-12-28' }), 3, MON).nextDue).toBe('2024-01-04');
     expect(postponeTask(task({ nextDue: '2024-01-05' }), 1, MON).nextDue).toBe('2024-01-06');
   });

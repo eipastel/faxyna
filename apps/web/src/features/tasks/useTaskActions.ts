@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import {
-  completeTask, postponeTask, relativeDay, skipTask, uncompleteTask, type IsoDate, type Task,
+  completeTask, missTask, postponeTask, relativeDay, skipTask, uncompleteTask, type IsoDate, type Task,
 } from '@faxyna/core';
 import { useGateway } from '@/providers/GatewayProvider';
 import { useData } from '@/providers/DataProvider';
@@ -56,6 +56,13 @@ export function useTaskActions() {
         if (!prev) return;
         const t = skipTask(prev, today);
         return run(gateway.tasks.save(t), t.nextDue ? 'Pulada. Próxima ' + next(t) + '.' : 'Pulada e encerrada.', restore(prev));
+      },
+
+      miss(id: string) {
+        const prev = find(id);
+        if (!prev) return;
+        const t = missTask(prev, today);
+        return run(gateway.tasks.save(t), t.nextDue ? 'Marcada como não feita. Próxima ' + next(t) + '.' : 'Marcada como não feita e encerrada.', restore(prev));
       },
 
       postpone(id: string, days: number) {

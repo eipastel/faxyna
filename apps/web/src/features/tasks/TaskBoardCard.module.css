@@ -17,6 +17,13 @@
 .done {
   background: var(--surface-muted);
 }
+.missed {
+  border-color: var(--red);
+}
+.missedTag {
+  font: 500 12px var(--mono);
+  color: var(--red);
+}
 .projected {
   border-style: dashed;
 }
