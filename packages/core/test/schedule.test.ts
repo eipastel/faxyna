@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addDays, completeTask, dayOfWeek, joinNames, minutesLabel, nearestWeekday, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
   sameFrequency,
-  missTask, skipTask, unmissTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
+  missTask, skipTask, unmissTask, unskipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
 } from '../src';
 
 // 2024-01-01 is a Monday.
@@ -142,7 +142,13 @@ describe('ações', () => {
     expect(skipTask(task({ freq: { type: 'weekdays', days: [1] }, nextDue: '2024-01-08' }), MON).nextDue).toBe('2024-01-15');
     // Skipping an overdue occurrence keeps today's due (daily task, yesterday missed).
     const daily = task({ freq: { type: 'weekdays', days: [0, 1, 2, 3, 4, 5, 6] }, nextDue: '2023-12-31', streak: 3 });
-    expect(skipTask(daily, MON)).toMatchObject({ nextDue: MON, streak: 3 });
+    const skipped = skipTask(daily, MON);
+    expect(skipped).toMatchObject({ nextDue: MON, streak: 3 });
+    // Recorded on the day it was due, shown there in the Week view, and can be undone.
+    expect(skipped.history[0]).toEqual({ date: '2023-12-31', type: 'skip', personId: 'thiago' });
+    expect(weekAgenda([skipped], addDays(MON, -1), MON, null)[0].entries).toContainEqual(expect.objectContaining({ skipped: true }));
+    expect(unskipTask(skipped)).toEqual(daily);
+    expect(unskipTask(daily)).toBe(daily);
     // Overdue with nothing due today: moves on from today as before.
     expect(skipTask(task({ freq: { type: 'weekdays', days: [3] }, nextDue: '2023-12-27' }), MON).nextDue).toBe('2024-01-03');
     expect(postponeTask(task({ nextDue: '2023-12-28' }), 3, MON).nextDue).toBe('2024-01-04');

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type CSSProperties } from 'react';
-import { DONE_STATUS, dueStatus, MISSED_STATUS, freqLabel, joinNames, lastCompletion, minutesLabel, type IsoDate, type Task } from '@faxyna/core';
+import { DONE_STATUS, dueStatus, MISSED_STATUS, SKIPPED_STATUS, freqLabel, joinNames, lastCompletion, minutesLabel, type IsoDate, type Task } from '@faxyna/core';
 import { Avatar, Dot, Icon, Pill } from '@/components/ui';
 import { cx } from '@/lib/cx';
 import { roomColors } from '@/lib/roomColors';
@@ -18,6 +18,8 @@ export interface TaskOccurrence {
   done?: boolean;
   /** Closed as not done (Week view). */
   missed?: boolean;
+  /** Closed as not needed (Week view). */
+  skipped?: boolean;
   /** Computed future occurrence (not yet the `nextDue`). */
   projected?: boolean;
 }
@@ -32,7 +34,7 @@ interface TaskRowProps extends TaskOccurrence {
 }
 
 /** Task row reused in Today, Week (mobile) and Rooms. Swipe right completes, swipe left deletes. */
-export function TaskRow({ task, due, done, missed, projected, variant = 'today', index, roomId }: TaskRowProps) {
+export function TaskRow({ task, due, done, missed, skipped, projected, variant = 'today', index, roomId }: TaskRowProps) {
   const { today, taskRooms, person } = useData();
   const { complete, uncomplete, remove } = useTaskActions();
   const { openDetail } = useTaskSheet();
@@ -40,15 +42,16 @@ export function TaskRow({ task, due, done, missed, projected, variant = 'today',
   const r = rooms[0];
   const others = rooms.filter((x) => x.id !== roomId);
   const who = person(task.personId);
-  const status = done ? DONE_STATUS : missed ? MISSED_STATUS : dueStatus(due ?? task.nextDue, today, projected);
+  const closed = done || missed || skipped;
+  const status = done ? DONE_STATUS : missed ? MISSED_STATUS : skipped ? SKIPPED_STATUS : dueStatus(due ?? task.nextDue, today, projected);
   const open = () => openDetail(task.id);
   // Only the latest completion can be undone; older ones (Week view) just open the details.
   const last = lastCompletion(task);
   const undoable = done && !!last && (!due || due === last.date);
   // Overdue: the details ask which day it was actually done.
-  const overdue = !done && !missed && !!task.nextDue && task.nextDue < today;
-  const toggle = () => (undoable ? uncomplete(task.id) : done || missed || projected || overdue ? open() : complete(task.id));
-  const canToggle = undoable || !(done || missed || projected);
+  const overdue = !closed && !!task.nextDue && task.nextDue < today;
+  const toggle = () => (undoable ? uncomplete(task.id) : closed || projected || overdue ? open() : complete(task.id));
+  const canToggle = undoable || !(closed || projected);
 
   const [leaving, setLeaving] = useState(false);
   const swipe = useSwipe({
@@ -95,11 +98,11 @@ export function TaskRow({ task, due, done, missed, projected, variant = 'today',
           style={{ transform: swipe.x ? `translateX(${swipe.x}px)` : undefined }}
           {...swipe.handlers}
         >
-          <CheckButton done={done} missed={missed} projected={projected} undoable={undoable} onClick={toggle} />
+          <CheckButton done={done} missed={missed} skipped={skipped} projected={projected} undoable={undoable} onClick={toggle} />
 
           <button type="button" className={styles.main} onClick={open}>
             <span className={styles.nameLine}>
-              <span className={cx(styles.name, (done || missed) && styles.done)}>{task.name}</span>
+              <span className={cx(styles.name, closed && styles.done)}>{task.name}</span>
               {task.priority === 'alta' && <Icon name="priority_high" size={15} color="var(--amber)" />}
             </span>
             {variant === 'room' ? (
@@ -131,21 +134,22 @@ export function TaskRow({ task, due, done, missed, projected, variant = 'today',
 interface CheckButtonProps {
   done?: boolean;
   missed?: boolean;
+  skipped?: boolean;
   projected?: boolean;
   undoable?: boolean;
   onClick(): void;
 }
 
 /** Left circle: completes or undoes with one tap (opens details when it can't). */
-function CheckButton({ done, missed, projected, undoable, onClick }: CheckButtonProps) {
+function CheckButton({ done, missed, skipped, projected, undoable, onClick }: CheckButtonProps) {
   return (
     <button
       type="button"
-      aria-label={undoable ? 'Desmarcar' : done || missed || projected ? 'Ver detalhes' : 'Concluir'}
-      className={cx(styles.check, done && styles.checkDone, missed && styles.checkMissed, projected && styles.checkProjected)}
+      aria-label={undoable ? 'Desmarcar' : done || missed || skipped || projected ? 'Ver detalhes' : 'Concluir'}
+      className={cx(styles.check, done && styles.checkDone, missed && styles.checkMissed, skipped && styles.checkSkipped, projected && styles.checkProjected)}
       onClick={onClick}
     >
-      <Icon name={missed ? 'close' : 'check'} size={16} className={styles.checkIcon} />
+      <Icon name={missed ? 'close' : skipped ? 'redo' : 'check'} size={16} className={styles.checkIcon} />
     </button>
   );
 }

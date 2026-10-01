@@ -24,6 +24,10 @@
   font: 500 12px var(--mono);
   color: var(--red);
 }
+.skippedTag {
+  font: 500 12px var(--mono);
+  color: var(--text-3);
+}
 .projected {
   border-style: dashed;
 }

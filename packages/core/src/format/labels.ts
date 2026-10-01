@@ -87,10 +87,11 @@ export function dueStatus(due: IsoDate | null | undefined, today: IsoDate, proje
 
 export const DONE_STATUS: StatusLabel = { label: 'Feita', tone: 'done' };
 export const MISSED_STATUS: StatusLabel = { label: 'Não feita', tone: 'overdue' };
+export const SKIPPED_STATUS: StatusLabel = { label: 'Pulada', tone: 'neutral' };
 
 export function historyLabel(h: HistoryEntry): StatusLabel {
   if (h.type === 'done') return h.onTime ? { label: 'No prazo', tone: 'done' } : { label: 'Com atraso', tone: 'late' };
-  if (h.type === 'skip') return { label: 'Pulada', tone: 'neutral' };
+  if (h.type === 'skip') return SKIPPED_STATUS;
   if (h.type === 'missed') return MISSED_STATUS;
   return { label: 'Adiada +' + h.days + 'd', tone: 'neutral' };
 }

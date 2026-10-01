@@ -105,8 +105,13 @@
   border-color: var(--red);
   background: var(--red);
 }
+.checkSkipped {
+  border-color: var(--text-4);
+  background: var(--text-4);
+}
 .checkDone .checkIcon,
-.checkMissed .checkIcon {
+.checkMissed .checkIcon,
+.checkSkipped .checkIcon {
   opacity: 1;
   transform: none;
 }
