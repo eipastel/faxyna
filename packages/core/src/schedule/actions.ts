@@ -80,7 +80,26 @@ export function missTask(task: Task, today: IsoDate): Task {
     nextDue: next,
     archived: !next,
     streak: 0,
-    history: [{ date: task.nextDue ?? today, type: 'missed', personId: task.personId }, ...task.history],
+    history: [{ date: task.nextDue ?? today, type: 'missed', personId: task.personId, prevStreak: task.streak }, ...task.history],
+  };
+}
+
+/** The "not done" mark `unmissTask` can revert: the latest history entry, if it is one. */
+export function lastMiss(task: Task) {
+  const last = task.history[0];
+  return last?.type === 'missed' ? last : undefined;
+}
+
+/** Reverts the latest "not done" mark: the occurrence is due again on the day it was. */
+export function unmissTask(task: Task): Task {
+  const last = lastMiss(task);
+  if (!last) return task;
+  return {
+    ...task,
+    nextDue: last.date,
+    archived: false,
+    streak: last.prevStreak ?? task.streak,
+    history: task.history.slice(1),
   };
 }
 

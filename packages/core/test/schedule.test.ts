@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addDays, completeTask, dayOfWeek, joinNames, minutesLabel, nearestWeekday, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
   sameFrequency,
-  missTask, skipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
+  missTask, skipTask, unmissTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
 } from '../src';
 
 // 2024-01-01 is a Monday.
@@ -124,7 +124,13 @@ describe('ações', () => {
     const daily = task({ freq: { type: 'weekdays', days: [0, 1, 2, 3, 4, 5, 6] }, nextDue: '2023-12-31', streak: 3 });
     const t = missTask(daily, MON);
     expect(t).toMatchObject({ nextDue: MON, streak: 0 });
-    expect(t.history[0]).toEqual({ date: '2023-12-31', type: 'missed', personId: 'thiago' });
+    expect(t.history[0]).toEqual({ date: '2023-12-31', type: 'missed', personId: 'thiago', prevStreak: 3 });
+    // Undone: due again on that day with the streak back; then done on that day instead.
+    expect(unmissTask(t)).toEqual(daily);
+    const fixed = completeTask(unmissTask(t), MON, '2023-12-31');
+    expect(fixed).toMatchObject({ nextDue: MON, streak: 4 });
+    expect(uncompleteTask(fixed)).toEqual(daily);
+    expect(unmissTask(daily)).toBe(daily);
     // Shows on the Week view on the day it was due.
     const day = weekAgenda([t], addDays(MON, -1), MON, null)[0];
     expect(day.entries).toContainEqual(expect.objectContaining({ due: '2023-12-31', missed: true, done: false }));

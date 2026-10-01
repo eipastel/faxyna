@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { addDays, capitalize, fmtLong, fmtShort, freqLabel, historyLabel, joinNames, lastCompletion, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
+import { addDays, capitalize, fmtLong, fmtShort, freqLabel, historyLabel, joinNames, lastCompletion, lastMiss, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
 import { Button, Card, Dot, Eyebrow, Icon, IconButton, Input } from '@/components/ui';
 import { roomColors } from '@/lib/roomColors';
 import { useData } from '@/providers/DataProvider';
@@ -20,7 +20,11 @@ export function TaskDetail({ task }: { task: Task }) {
   const rooms = taskRooms(task);
   const r = rooms[0];
   const who = person(task.personId);
-  const doneToday = lastCompletion(task)?.date === today;
+  const lastDone = lastCompletion(task);
+  const doneToday = lastDone?.date === today;
+  // ponytail: completions can be undone here for a week; older ones stay as they are.
+  const undoable = !!lastDone && lastDone.date >= addDays(today, -7);
+  const missed = lastMiss(task);
   const overdue = !!task.nextDue && task.nextDue < today;
   const [otherDay, setOtherDay] = useState('');
 
@@ -74,9 +78,15 @@ export function TaskDetail({ task }: { task: Task }) {
         <span>{streakLabel}</span>
       </div>
 
-      {doneToday && (
+      {undoable && (
         <Button size="xxl" icon="undo" iconSize={20} onClick={act(() => actions.uncomplete(task.id))}>
-          Desmarcar como feita
+          {doneToday ? 'Desmarcar como feita' : 'Desmarcar feita em ' + fmtShort(lastDone.date)}
+        </Button>
+      )}
+
+      {missed && (
+        <Button size="xxl" icon="check" iconSize={20} onClick={act(() => actions.completeMissed(task.id))}>
+          Foi feita em {fmtShort(missed.date)}
         </Button>
       )}
 

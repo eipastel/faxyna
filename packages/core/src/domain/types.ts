@@ -17,8 +17,8 @@ export type HistoryEntry =
   | { date: IsoDate; type: 'done'; personId: string | null; onTime: boolean; prevDue?: IsoDate; prevStreak?: number }
   /** Not needed this time. */
   | { date: IsoDate; type: 'skip'; personId: string | null }
-  /** Should have been done and wasn't; `date` is the day it was due. */
-  | { date: IsoDate; type: 'missed'; personId: string | null }
+  /** Should have been done and wasn't; `date` is the day it was due. `prevStreak` lets `unmissTask` restore it. */
+  | { date: IsoDate; type: 'missed'; personId: string | null; prevStreak?: number }
   | { date: IsoDate; type: 'postpone'; days: number; personId: string | null };
 
 export interface Task {
