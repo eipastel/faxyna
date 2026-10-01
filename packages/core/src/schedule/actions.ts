@@ -68,8 +68,21 @@ export function skipTask(task: Task, today: IsoDate): Task {
     ...task,
     nextDue: next,
     archived: !next,
-    history: [{ date: today, type: 'skip', personId: task.personId }, ...task.history],
+    history: [{ date: task.nextDue ?? today, type: 'skip', personId: task.personId }, ...task.history],
   };
+}
+
+/** The skip `unskipTask` can revert: the latest history entry, if it is one. */
+export function lastSkip(task: Task) {
+  const last = task.history[0];
+  return last?.type === 'skip' ? last : undefined;
+}
+
+/** Reverts the latest skip: the occurrence is due again on the day it was. */
+export function unskipTask(task: Task): Task {
+  const last = lastSkip(task);
+  if (!last) return task;
+  return { ...task, nextDue: last.date, archived: false, history: task.history.slice(1) };
 }
 
 /** Should have been done and wasn't: breaks the streak; recorded on the day it was due. */

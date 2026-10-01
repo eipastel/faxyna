@@ -10,7 +10,7 @@ import type { TaskOccurrence } from './TaskRow';
 import styles from './TaskBoardCard.module.css';
 
 /** Compact card for the weekly board (desktop). */
-export function TaskBoardCard({ task, done, missed, projected }: TaskOccurrence) {
+export function TaskBoardCard({ task, done, missed, skipped, projected }: TaskOccurrence) {
   const { taskRooms, person } = useData();
   const { openDetail } = useTaskSheet();
   const rooms = taskRooms(task);
@@ -20,11 +20,12 @@ export function TaskBoardCard({ task, done, missed, projected }: TaskOccurrence)
   return (
     <button
       type="button"
-      className={cx(styles.card, done && styles.done, missed && styles.missed, projected && styles.projected)}
+      className={cx(styles.card, (done || skipped) && styles.done, missed && styles.missed, projected && styles.projected)}
       onClick={() => openDetail(task.id)}
     >
       <span className={styles.name}>{task.name}</span>
       {missed && <span className={styles.missedTag}>Não feita</span>}
+      {skipped && <span className={styles.skippedTag}>Pulada</span>}
       <span className={styles.meta}>
         {r && <Dot color={roomColors(r.hue).dot} />}
         <span className={styles.room}>{joinNames(rooms.map((x) => x.name))}</span>

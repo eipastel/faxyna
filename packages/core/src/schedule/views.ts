@@ -44,6 +44,7 @@ export interface AgendaEntry {
   projected: boolean;
   done: boolean;
   missed?: boolean;
+  skipped?: boolean;
 }
 
 export interface AgendaDay {
@@ -51,7 +52,7 @@ export interface AgendaDay {
   entries: AgendaEntry[];
 }
 
-/** 7 days from `weekStart`: scheduled occurrences, overdue ones (on today), completions and missed ones. */
+/** 7 days from `weekStart`: scheduled occurrences, overdue ones (on today), completions, missed and skipped ones. */
 export function weekAgenda(tasks: Task[], weekStart: IsoDate, today: IsoDate, person: PersonFilter): AgendaDay[] {
   const weekEnd = addDays(weekStart, 6);
   const map = new Map<IsoDate, AgendaEntry[]>();
@@ -68,14 +69,16 @@ export function weekAgenda(tasks: Task[], weekStart: IsoDate, today: IsoDate, pe
 
   tasks.forEach((t) =>
     t.history.forEach((h) => {
-      if ((h.type === 'done' || h.type === 'missed') && entryMatches(h, person))
-        map.get(h.date)?.push({ task: t, due: h.date, projected: false, done: h.type === 'done', missed: h.type === 'missed' });
+      if (h.type !== 'postpone' && entryMatches(h, person))
+        map.get(h.date)?.push({
+          task: t, due: h.date, projected: false, done: h.type === 'done', missed: h.type === 'missed', skipped: h.type === 'skip',
+        });
     }),
   );
 
   return [...map].map(([date, entries]) => ({
     date,
-    entries: entries.sort((a, b) => Number(a.done || !!a.missed) - Number(b.done || !!b.missed)),
+    entries: entries.sort((a, b) => Number(a.done || !!a.missed || !!a.skipped) - Number(b.done || !!b.missed || !!b.skipped)),
   }));
 }
 

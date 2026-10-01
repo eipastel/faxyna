@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { addDays, capitalize, fmtLong, fmtShort, freqLabel, historyLabel, joinNames, lastCompletion, lastMiss, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
+import { addDays, capitalize, fmtLong, fmtShort, freqLabel, historyLabel, joinNames, lastCompletion, lastMiss, lastSkip, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
 import { Button, Card, Dot, Eyebrow, Icon, IconButton, Input } from '@/components/ui';
 import { roomColors } from '@/lib/roomColors';
 import { useData } from '@/providers/DataProvider';
@@ -25,6 +25,7 @@ export function TaskDetail({ task }: { task: Task }) {
   // ponytail: completions can be undone here for a week; older ones stay as they are.
   const undoable = !!lastDone && lastDone.date >= addDays(today, -7);
   const missed = lastMiss(task);
+  const skipped = lastSkip(task);
   const overdue = !!task.nextDue && task.nextDue < today;
   const [otherDay, setOtherDay] = useState('');
 
@@ -87,6 +88,12 @@ export function TaskDetail({ task }: { task: Task }) {
       {missed && (
         <Button size="xxl" icon="check" iconSize={20} onClick={act(() => actions.completeMissed(task.id))}>
           Foi feita em {fmtShort(missed.date)}
+        </Button>
+      )}
+
+      {skipped && (
+        <Button size="xxl" icon="undo" iconSize={20} onClick={act(() => actions.unskip(task.id))}>
+          Despular {fmtShort(skipped.date)}
         </Button>
       )}
 
