@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { addDays, capitalize, fmtLong, fmtShort, freqLabel, historyLabel, joinNames, lastCompletion, lastMiss, lastSkip, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
+import { addDays, capitalize, fmtLong, fmtShort, freqLabel, historyLabel, joinNames, lastCompletion, lastMiss, lastPostpone, lastSkip, minutesLabel, PRIORITY_LABEL, type Task } from '@faxyna/core';
 import { Button, Card, Dot, Eyebrow, Icon, IconButton, Input } from '@/components/ui';
 import { roomColors } from '@/lib/roomColors';
 import { useData } from '@/providers/DataProvider';
@@ -26,6 +26,7 @@ export function TaskDetail({ task }: { task: Task }) {
   const undoable = !!lastDone && lastDone.date >= addDays(today, -7);
   const missed = lastMiss(task);
   const skipped = lastSkip(task);
+  const postponed = lastPostpone(task);
   const overdue = !!task.nextDue && task.nextDue < today;
   const [otherDay, setOtherDay] = useState('');
 
@@ -94,6 +95,12 @@ export function TaskDetail({ task }: { task: Task }) {
       {skipped && (
         <Button size="xxl" icon="undo" iconSize={20} onClick={act(() => actions.unskip(task.id))}>
           Despular {fmtShort(skipped.date)}
+        </Button>
+      )}
+
+      {postponed && (
+        <Button size="xxl" icon="undo" iconSize={20} onClick={act(() => actions.unpostpone(task.id))}>
+          Desfazer adiamento
         </Button>
       )}
 

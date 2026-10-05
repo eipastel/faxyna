@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addDays, completeTask, dayOfWeek, joinNames, minutesLabel, nearestWeekday, dueStatus, firstDue, freqLabel, occurrences, postponeTask,
+  addDays, completeTask, dayOfWeek, joinNames, minutesLabel, nearestWeekday, dueStatus, firstDue, freqLabel, occurrences, postponeTask, unpostponeTask,
   sameFrequency,
   missTask, skipTask, unmissTask, unskipTask, todayGroups, uncompleteTask, weekAgenda, weekPercent, weekStartOf, weekStats, type Task,
 } from '../src';
@@ -153,6 +153,10 @@ describe('ações', () => {
     expect(skipTask(task({ freq: { type: 'weekdays', days: [3] }, nextDue: '2023-12-27' }), MON).nextDue).toBe('2024-01-03');
     expect(postponeTask(task({ nextDue: '2023-12-28' }), 3, MON).nextDue).toBe('2024-01-04');
     expect(postponeTask(task({ nextDue: '2024-01-05' }), 1, MON).nextDue).toBe('2024-01-06');
+    // Postponing can be undone, also on older entries without `prevDue`.
+    const overdue = task({ nextDue: '2023-12-28' });
+    expect(unpostponeTask(postponeTask(overdue, 3, MON))).toEqual(overdue);
+    expect(unpostponeTask({ ...overdue, nextDue: '2024-01-06', history: [{ date: MON, type: 'postpone', days: 1, personId: null }] }).nextDue).toBe('2024-01-05');
   });
 });
 
