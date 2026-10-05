@@ -121,6 +121,21 @@ export function postponeTask(task: Task, days: number, today: IsoDate): Task {
   return {
     ...task,
     nextDue: addDays(from, days),
-    history: [{ date: today, type: 'postpone', days, personId: task.personId }, ...task.history],
+    history: [{ date: today, type: 'postpone', days, personId: task.personId, prevDue: task.nextDue ?? undefined }, ...task.history],
   };
+}
+
+/** The postponement `unpostponeTask` can revert: the latest history entry, if it is one. */
+export function lastPostpone(task: Task) {
+  const last = task.history[0];
+  return last?.type === 'postpone' ? last : undefined;
+}
+
+/** Reverts the latest postponement: due again on the day it was. */
+export function unpostponeTask(task: Task): Task {
+  const last = lastPostpone(task);
+  if (!last) return task;
+  // Older entries lack `prevDue`: counting the days back is exact unless it was overdue.
+  const prevDue = last.prevDue ?? (task.nextDue ? addDays(task.nextDue, -last.days) : last.date);
+  return { ...task, nextDue: prevDue, archived: false, history: task.history.slice(1) };
 }

@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import {
-  completeTask, lastMiss, missTask, postponeTask, relativeDay, skipTask, uncompleteTask, unmissTask, unskipTask, type IsoDate, type Task,
+  completeTask, lastMiss, missTask, postponeTask, relativeDay, skipTask, uncompleteTask, unmissTask, unpostponeTask, unskipTask, type IsoDate, type Task,
 } from '@faxyna/core';
 import { useGateway } from '@/providers/GatewayProvider';
 import { useData } from '@/providers/DataProvider';
@@ -85,6 +85,13 @@ export function useTaskActions() {
         if (!prev?.nextDue) return;
         const t = postponeTask(prev, days, today);
         return run(gateway.tasks.save(t), 'Adiada para ' + next(t) + '.', restore(prev));
+      },
+
+      unpostpone(id: string) {
+        const prev = find(id);
+        if (!prev) return;
+        const t = unpostponeTask(prev);
+        return run(gateway.tasks.save(t), 'Adiamento desfeito. Volta para ' + next(t) + '.', restore(prev));
       },
 
       create(task: Task) {
